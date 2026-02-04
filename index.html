@@ -726,6 +726,31 @@
                 grid-template-columns: 1fr;
             }
 
+            .hero-title {
+                font-size: clamp(2.4rem, 9vw, 3.6rem);
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .hero-badges {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                justify-items: center;
+                gap: 0.5rem;
+            }
+
+            .hero-badge {
+                font-size: 0.7rem;
+                padding: 0.4rem 0.75rem;
+                text-align: center;
+            }
+
+            .hero-interests {
+                font-size: 0.95rem;
+            }
+
             .nav-links::-webkit-scrollbar {
                 display: none;
             }
@@ -754,6 +779,16 @@
 
             .modal-list {
                 grid-template-columns: 1fr;
+            }
+
+            .mobile-controls {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.6rem;
+            }
+
+            .control-btn {
+                font-size: 0.9rem;
+                padding: 0.7rem 0;
             }
         }
 
@@ -1471,7 +1506,8 @@
             velocity = { x: 0, y: 0 }; // Don't move until key press
             score = 0;
             gameRunning = true;
-            isMobileGame = window.innerWidth <= 768;
+            const isMobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+            isMobileGame = isMobile;
             if (isMobileGame) {
                 activeArena = mobileGameArena;
                 mobileGameOverlay.classList.add('active');
