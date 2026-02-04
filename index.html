@@ -736,7 +736,7 @@
 
             .hero-badges {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 justify-items: center;
                 gap: 0.5rem;
             }
@@ -745,6 +745,11 @@
                 font-size: 0.7rem;
                 padding: 0.4rem 0.75rem;
                 text-align: center;
+                width: 100%;
+                min-height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .hero-interests {
@@ -789,6 +794,10 @@
             .control-btn {
                 font-size: 0.9rem;
                 padding: 0.7rem 0;
+            }
+
+            .game-score-display {
+                display: none;
             }
         }
 
@@ -950,6 +959,13 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        .mobile-game-score {
+            color: var(--accent-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+
         .mobile-game-title {
             color: var(--accent-primary);
             font-size: 1rem;
@@ -979,29 +995,60 @@
         }
 
         .mobile-controls {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
+            position: relative;
+            height: 140px;
             margin-top: 1rem;
         }
 
         .control-btn {
+            position: absolute;
             background: rgba(0, 217, 255, 0.12);
             border: 1px solid rgba(0, 217, 255, 0.35);
             color: var(--accent-primary);
             font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
-            padding: 0.75rem 0;
+            width: 56px;
+            height: 56px;
             border-radius: 10px;
             text-align: center;
             user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .control-btn.turbo {
-            grid-column: span 3;
+            position: static;
+            width: 100%;
+            height: 44px;
+            margin-top: 0.75rem;
             background: rgba(255, 59, 59, 0.12);
             border-color: rgba(255, 59, 59, 0.6);
             color: #ff3b3b;
+        }
+
+        .control-btn.up {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .control-btn.down {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .control-btn.left {
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .control-btn.right {
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .game-score-display {
@@ -1386,15 +1433,16 @@
     <div class="mobile-game-overlay" id="mobileGameOverlay" aria-hidden="true">
         <div class="mobile-game-header">
             <div class="mobile-game-title">Snake Arena</div>
+            <div class="mobile-game-score"><span data-i18n="score_label">SCORE</span>: <span id="mobileScore">0</span> · <span data-i18n="high_label">HIGH</span>: <span id="mobileHighScore">0</span></div>
             <button class="mobile-game-close" id="mobileGameClose">Close</button>
         </div>
         <div class="mobile-game-arena" id="mobileGameArena"></div>
         <div class="mobile-controls">
-            <div class="control-btn" id="btnUp">▲</div>
-            <div class="control-btn" id="btnTurbo">Turbo</div>
-            <div class="control-btn" id="btnDown">▼</div>
-            <div class="control-btn" id="btnLeft">◀</div>
-            <div class="control-btn" id="btnRight">▶</div>
+            <div class="control-btn up" id="btnUp">▲</div>
+            <div class="control-btn down" id="btnDown">▼</div>
+            <div class="control-btn left" id="btnLeft">◀</div>
+            <div class="control-btn right" id="btnRight">▶</div>
+            <div class="control-btn turbo" id="btnTurbo">Turbo</div>
             <div class="control-btn turbo" id="btnStopTurbo">Stop Turbo</div>
         </div>
     </div>
@@ -1455,6 +1503,8 @@
         const scoreElement = document.getElementById('score');
         const highScoreElement = document.getElementById('highScore');
         const snakeHighScoreElement = document.getElementById('snakeHighScore');
+        const mobileScoreElement = document.getElementById('mobileScore');
+        const mobileHighScoreElement = document.getElementById('mobileHighScore');
         const gameOverMessage = document.getElementById('gameOverMessage');
         const finalScoreElement = document.getElementById('finalScore');
         const gameArena = document.getElementById('gameArena');
@@ -1518,6 +1568,8 @@
             scoreElement.textContent = score;
             highScoreElement.textContent = highScore;
             snakeHighScoreElement.textContent = highScore;
+            mobileScoreElement.textContent = score;
+            mobileHighScoreElement.textContent = highScore;
             gameOverMessage.classList.remove('active');
 
             // Create snake segments
@@ -1551,6 +1603,7 @@
                 foodElement = null;
             }
             snakeHighScoreElement.textContent = highScore;
+            mobileHighScoreElement.textContent = highScore;
         }
 
         function restartGame() {
@@ -1625,10 +1678,12 @@
                     Math.abs(head.y - foodY) < gridSize) {
                     score++;
                     scoreElement.textContent = score;
+                    mobileScoreElement.textContent = score;
                     if (score > highScore) {
                         highScore = score;
                         highScoreElement.textContent = highScore;
                         snakeHighScoreElement.textContent = highScore;
+                        mobileHighScoreElement.textContent = highScore;
                     }
                     foodElement.remove();
                     spawnFood();
