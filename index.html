@@ -877,6 +877,83 @@
             cursor: pointer;
         }
 
+        .mobile-game-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 11, 18, 0.95);
+            display: none;
+            flex-direction: column;
+            z-index: 3000;
+            padding: 1rem;
+        }
+
+        .mobile-game-overlay.active {
+            display: flex;
+        }
+
+        .mobile-game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .mobile-game-title {
+            color: var(--accent-primary);
+            font-size: 1rem;
+        }
+
+        .mobile-game-close {
+            background: transparent;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            color: var(--accent-primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+        }
+
+        .mobile-game-arena {
+            flex: 1;
+            background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.2), transparent 55%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.15), transparent 50%),
+                        var(--bg-secondary);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.35);
+            touch-action: none;
+        }
+
+        .mobile-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .control-btn {
+            background: rgba(0, 217, 255, 0.12);
+            border: 1px solid rgba(0, 217, 255, 0.35);
+            color: var(--accent-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            padding: 0.75rem 0;
+            border-radius: 10px;
+            text-align: center;
+            user-select: none;
+        }
+
+        .control-btn.turbo {
+            grid-column: span 3;
+            background: rgba(255, 59, 59, 0.12);
+            border-color: rgba(255, 59, 59, 0.6);
+            color: #ff3b3b;
+        }
+
         .game-score-display {
             position: fixed;
             top: 100px;
@@ -1278,6 +1355,23 @@
         </div>
     </section>
 
+    <!-- Mobile Game Overlay -->
+    <div class="mobile-game-overlay" id="mobileGameOverlay" aria-hidden="true">
+        <div class="mobile-game-header">
+            <div class="mobile-game-title">Snake Arena</div>
+            <button class="mobile-game-close" id="mobileGameClose">Close</button>
+        </div>
+        <div class="mobile-game-arena" id="mobileGameArena"></div>
+        <div class="mobile-controls">
+            <div class="control-btn" id="btnUp">▲</div>
+            <div class="control-btn" id="btnTurbo">Turbo</div>
+            <div class="control-btn" id="btnDown">▼</div>
+            <div class="control-btn" id="btnLeft">◀</div>
+            <div class="control-btn" id="btnRight">▶</div>
+            <div class="control-btn turbo" id="btnStopTurbo">Stop Turbo</div>
+        </div>
+    </div>
+
     <!-- Project Modal -->
     <div class="project-modal" id="projectModal" aria-hidden="true">
         <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -1338,10 +1432,22 @@
         const finalScoreElement = document.getElementById('finalScore');
         const gameInstructions = document.getElementById('gameInstructions');
         const gameArena = document.getElementById('gameArena');
+        const mobileGameOverlay = document.getElementById('mobileGameOverlay');
+        const mobileGameArena = document.getElementById('mobileGameArena');
+        const mobileGameClose = document.getElementById('mobileGameClose');
+        const btnUp = document.getElementById('btnUp');
+        const btnDown = document.getElementById('btnDown');
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnTurbo = document.getElementById('btnTurbo');
+        const btnStopTurbo = document.getElementById('btnStopTurbo');
         const arenaHelp = document.getElementById('arenaHelp');
         const gameArenaSection = document.getElementById('game-arena');
         const arenaClose = document.getElementById('arenaClose');
         const closeGameFromOver = document.getElementById('closeGameFromOver');
+
+        let activeArena = gameArena;
+        let isMobileGame = false;
 
         gameButton.addEventListener('click', toggleGame);
 
@@ -1365,11 +1471,17 @@
             velocity = { x: 0, y: 0 }; // Don't move until key press
             score = 0;
             gameRunning = true;
-            gameArenaSection.classList.add('active');
-            arenaHelp.style.display = 'block';
-            gameArenaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            if (window.innerWidth <= 768) {
+            isMobileGame = window.innerWidth <= 768;
+            if (isMobileGame) {
+                activeArena = mobileGameArena;
+                mobileGameOverlay.classList.add('active');
+                mobileGameOverlay.setAttribute('aria-hidden', 'false');
                 document.body.classList.add('no-scroll');
+            } else {
+                activeArena = gameArena;
+                gameArenaSection.classList.add('active');
+                arenaHelp.style.display = 'block';
+                gameArenaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
             // Update UI
@@ -1399,8 +1511,13 @@
             updateGameButtonLabel();
             scoreDisplay.classList.remove('active');
             gameInstructions.classList.remove('active');
-            gameArenaSection.classList.remove('active');
-            arenaHelp.style.display = 'none';
+            if (isMobileGame) {
+                mobileGameOverlay.classList.remove('active');
+                mobileGameOverlay.setAttribute('aria-hidden', 'true');
+            } else {
+                gameArenaSection.classList.remove('active');
+                arenaHelp.style.display = 'none';
+            }
             document.body.classList.remove('no-scroll');
             clearSnakeElements();
             clearEnemies();
@@ -1426,7 +1543,7 @@
                 const opacity = 1 - (index / snake.length) * 0.4;
                 segmentEl.style.background = `linear-gradient(135deg, rgba(0, 217, 255, ${opacity}), rgba(124, 58, 237, ${opacity}))`;
                 
-                gameArena.appendChild(segmentEl);
+                activeArena.appendChild(segmentEl);
                 snakeElements.push(segmentEl);
             });
         }
@@ -1444,7 +1561,7 @@
                 return;
             }
 
-            const arenaRect = gameArena.getBoundingClientRect();
+            const arenaRect = activeArena.getBoundingClientRect();
             const arenaWidth = arenaRect.width;
             const arenaHeight = arenaRect.height;
 
@@ -1510,7 +1627,7 @@
             while (snakeElements.length < snake.length) {
                 const segmentEl = document.createElement('div');
                 segmentEl.className = 'snake-segment';
-                gameArena.appendChild(segmentEl);
+                activeArena.appendChild(segmentEl);
                 snakeElements.push(segmentEl);
             }
             while (snakeElements.length > snake.length) {
@@ -1535,7 +1652,7 @@
             
             // Try to find a safe position away from edges and text
             while (attempts < 100) {
-                const arenaRect = gameArena.getBoundingClientRect();
+            const arenaRect = activeArena.getBoundingClientRect();
                 foodPos = {
                     x: Math.floor(Math.random() * (arenaRect.width - gridSize) / gridSize) * gridSize,
                     y: Math.floor(Math.random() * (arenaRect.height - gridSize) / gridSize) * gridSize
@@ -1576,12 +1693,12 @@
                     <circle cx="10" cy="2" r="2" fill="#00d9ff"/>
                 </svg>
             `;
-            gameArena.appendChild(foodElement);
+            activeArena.appendChild(foodElement);
         }
 
         function createEnemies() {
             clearEnemies();
-            const arenaRect = gameArena.getBoundingClientRect();
+            const arenaRect = activeArena.getBoundingClientRect();
             const enemyCount = 2;
             const enemySpeed = 6;
             for (let i = 0; i < enemyCount; i++) {
@@ -1605,7 +1722,7 @@
                         <rect x="7" y="13" width="6" height="2" fill="#0b2f1b"/>
                     </svg>
                 `;
-                gameArena.appendChild(enemyEl);
+                activeArena.appendChild(enemyEl);
                 enemyElements.push(enemyEl);
             }
         }
@@ -1657,8 +1774,13 @@
             finalScoreElement.textContent = score;
             gameOverMessage.classList.add('active');
             gameInstructions.classList.remove('active'); // Hide instructions
-            gameArenaSection.classList.remove('active');
-            arenaHelp.style.display = 'none';
+            if (isMobileGame) {
+                mobileGameOverlay.classList.remove('active');
+                mobileGameOverlay.setAttribute('aria-hidden', 'true');
+            } else {
+                gameArenaSection.classList.remove('active');
+                arenaHelp.style.display = 'none';
+            }
             document.body.classList.remove('no-scroll');
             setTimeout(() => {
                 clearSnakeElements();
@@ -1788,6 +1910,45 @@
                 gameInstructions.classList.remove('active');
             }
         }, { passive: true });
+
+        function setDirection(dir) {
+            if (!gameRunning) return;
+            if (dir === 'up' && velocity.y === 0) velocity = { x: 0, y: -gridSize };
+            if (dir === 'down' && velocity.y === 0) velocity = { x: 0, y: gridSize };
+            if (dir === 'left' && velocity.x === 0) velocity = { x: -gridSize, y: 0 };
+            if (dir === 'right' && velocity.x === 0) velocity = { x: gridSize, y: 0 };
+        }
+
+        function bindControl(btn, dir) {
+            if (!btn) return;
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                setDirection(dir);
+            }, { passive: false });
+            btn.addEventListener('click', () => setDirection(dir));
+        }
+
+        bindControl(btnUp, 'up');
+        bindControl(btnDown, 'down');
+        bindControl(btnLeft, 'left');
+        bindControl(btnRight, 'right');
+
+        btnTurbo.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            setGameSpeed(turboSpeed);
+        }, { passive: false });
+        btnTurbo.addEventListener('click', () => setGameSpeed(turboSpeed));
+
+        btnStopTurbo.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            setGameSpeed(normalSpeed);
+        }, { passive: false });
+        btnStopTurbo.addEventListener('click', () => setGameSpeed(normalSpeed));
+
+        mobileGameClose.addEventListener('click', () => {
+            endGame();
+            gameOverMessage.classList.remove('active');
+        });
 
         function scrollToSection(sectionId) {
             const section = document.getElementById(sectionId);
