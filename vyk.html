@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vyk - Software Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1a2332;
+            --accent-primary: #00d9ff;
+            --accent-secondary: #7c3aed;
+            --text-primary: #e8edf4;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --grid-color: rgba(0, 217, 255, 0.08);
+            --glow: rgba(0, 217, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Animated grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+            padding: 1.5rem 3rem;
+            z-index: 1000;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-shadow: 0 0 20px var(--glow);
+            letter-spacing: -0.05em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+            opacity: 0.1;
+            transition: left 0.5s ease;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            min-height: 100vh;
+            padding: 8rem 3rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Section */
+        #home {
+            background: radial-gradient(ellipse at top, rgba(124, 58, 237, 0.15), transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(0, 217, 255, 0.1), transparent 50%);
+        }
+
+        .hero-content {
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.75rem;
+            animation: fadeInUp 0.8s ease-out 0.55s both;
+        }
+
+        .hero-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            background: rgba(0, 217, 255, 0.12);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            color: var(--accent-primary);
+        }
+
+        .hero-interests {
+            max-width: 900px;
+            margin: 0 auto 3rem;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.25rem 2.5rem;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 50px rgba(0, 217, 255, 0.5);
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 12px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-category:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), 
+                        0 0 40px rgba(0, 217, 255, 0.1),
+                        inset 0 0 20px rgba(0, 217, 255, 0.05);
+        }
+
+        .skill-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .skill-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 20px;
+            color: var(--accent-primary);
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0, 217, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .project-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.4), 
+                        0 0 50px rgba(0, 217, 255, 0.15),
+                        inset 0 0 25px rgba(0, 217, 255, 0.05);
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.2);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(0, 217, 255, 0.2));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+        }
+
+        .project-card:hover .project-image::before {
+            left: 100%;
+        }
+
+        .project-image iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .project-image .image-link {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+        }
+
+        /* Project Modal */
+        .project-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 11, 18, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+        }
+
+        .project-modal.active {
+            display: flex;
+        }
+
+        .modal-card {
+            width: min(760px, 92vw);
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: transparent;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            color: var(--accent-primary);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.6rem;
+            margin-top: 2rem;
+        }
+
+        .modal-actions .project-secondary {
+            display: inline-flex;
+        }
+
+        .modal-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.5rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-list span {
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        .project-content {
+            padding: 2rem;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .project-role {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(124, 58, 237, 0.2);
+            border-radius: 4px;
+            color: var(--accent-secondary);
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .project-link:hover {
+            gap: 1rem;
+        }
+
+        .project-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.6rem;
+        }
+
+        .project-secondary {
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-secondary);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            background: transparent;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .project-secondary:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Contact Section */
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .contact-item {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.15);
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            color: var(--accent-primary);
+        }
+
+        .contact-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .contact-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        .scroll-arrow {
+            width: 24px;
+            height: 24px;
+            border-left: 2px solid var(--accent-primary);
+            border-bottom: 2px solid var(--accent-primary);
+            transform: rotate(-45deg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                gap: 0.25rem;
+            }
+
+            .nav-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            section {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .section-header {
+                margin-bottom: 3rem;
+            }
+
+            .skills-grid,
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Snake Game Styles */
+        .game-button {
+            background: var(--accent-primary);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            padding: 0.9rem 1.25rem;
+            transition: all 0.3s ease;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 50px rgba(0, 217, 255, 0.8);
+            }
+        }
+
+        .game-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(0, 217, 255, 0.8);
+        }
+
+        .game-button.playing {
+            background: #ff3b3b;
+            animation: none;
+        }
+
+        .game-button.in-project {
+            position: static;
+            width: auto;
+            height: auto;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .snake-segment {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            z-index: 9998;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+
+        .robot-food {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            z-index: 9998;
+            pointer-events: none;
+        }
+
+        .alien-enemy {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            z-index: 9998;
+            pointer-events: none;
+        }
+
+        .game-arena-section {
+            display: none;
+            padding: 2rem 3rem 6rem;
+        }
+
+        .game-arena-section.active {
+            display: block;
+        }
+
+        .game-arena {
+            width: 100%;
+            height: 420px;
+            background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.2), transparent 55%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.15), transparent 50%),
+                        var(--bg-secondary);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .arena-help {
+            display: none;
+            margin-top: 1rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .arena-close {
+            margin-top: 1rem;
+            background: transparent;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            color: var(--accent-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+        }
+
+        .game-score-display {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: rgba(17, 24, 39, 0.9);
+            border: 1px solid var(--accent-primary);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+            z-index: 9999;
+            display: none;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+        }
+
+        .game-score-display.active {
+            display: block;
+        }
+
+        .game-instructions {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(17, 24, 39, 0.95);
+            border: 2px solid var(--accent-primary);
+            border-radius: 12px;
+            padding: 2rem 3rem;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            z-index: 9997;
+            display: none;
+            box-shadow: 0 0 50px rgba(0, 217, 255, 0.5);
+            backdrop-filter: blur(10px);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .game-instructions.active {
+            display: block;
+        }
+
+        .game-instructions p {
+            color: var(--accent-primary);
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .game-over-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(17, 24, 39, 0.95);
+            border: 2px solid #ff3b3b;
+            border-radius: 12px;
+            padding: 3rem;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 0 50px rgba(255, 59, 59, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .game-over-message.active {
+            display: block;
+        }
+
+        .game-over-message h2 {
+            color: #ff3b3b;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255, 59, 59, 0.8);
+        }
+
+        .game-over-message p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .restart-button {
+            padding: 1rem 2rem;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">&lt;/VYK&gt;</div>
+            <div class="nav-links">
+                <button class="nav-btn" onclick="scrollToSection('home')">Home</button>
+                <button class="nav-btn" onclick="scrollToSection('skills')">Skills</button>
+                <button class="nav-btn" onclick="scrollToSection('projects')">Projects</button>
+                <button class="nav-btn" onclick="scrollToSection('contact')">Contact</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-tag">// Software Engineer • Cybersecurity • Product Builder</div>
+                <h1 class="hero-title">Victor Llivina</h1>
+                <p class="hero-subtitle">Software Engineering at FIU • M.S. Cybersecurity at UEM • Project Manager at DC Cable</p>
+                <div class="hero-badges">
+                    <span class="hero-badge">Ethical Hacking</span>
+                    <span class="hero-badge">Digital Forensics</span>
+                    <span class="hero-badge">Software Development</span>
+                    <span class="hero-badge">AI</span>
+                    <span class="hero-badge">UI/UX Design</span>
+                    <span class="hero-badge">Post-Quantic Cryptography</span>
+                    <span class="hero-badge">Game Development</span>
+                </div>
+                <p class="hero-interests">I build secure, user-focused systems that turn complex problems into simple workflows. My work blends engineering, cybersecurity, and product thinking to ship tools people actually enjoy using.</p>
+                <button class="cta-button" onclick="scrollToSection('projects')">
+                    View My Work
+                </button>
+            </div>
+            <div class="scroll-indicator">
+                <div class="scroll-arrow"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">// Expertise</div>
+                <h2 class="section-title">Technical Skills</h2>
+                <p class="section-subtitle">A comprehensive toolkit for modern software development</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <div class="skill-icon">&lt;/&gt;</div>
+                    <h3 class="skill-title">Languages</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">Java</span>
+                        <span class="skill-tag">C++</span>
+                        <span class="skill-tag">SQL</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-icon">{ }</div>
+                    <h3 class="skill-title">Frontend</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">Vue.js</span>
+                        <span class="skill-tag">Next.js</span>
+                        <span class="skill-tag">Tailwind</span>
+                        <span class="skill-tag">HTML/CSS</span>
+                        <span class="skill-tag">WebGL</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-icon">[ ]</div>
+                    <h3 class="skill-title">Backend</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">Django</span>
+                        <span class="skill-tag">FastAPI</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">MongoDB</span>
+                        <span class="skill-tag">Redis</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-icon">#</div>
+                    <h3 class="skill-title">Security</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">Penetration Testing</span>
+                        <span class="skill-tag">Cryptography</span>
+                        <span class="skill-tag">Network Security</span>
+                        <span class="skill-tag">ISO 27001</span>
+                        <span class="skill-tag">OWASP</span>
+                        <span class="skill-tag">Threat Modeling</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-icon">☁</div>
+                    <h3 class="skill-title">DevOps & Cloud</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Kubernetes</span>
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">CI/CD</span>
+                        <span class="skill-tag">Terraform</span>
+                        <span class="skill-tag">Git</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-icon">~</div>
+                    <h3 class="skill-title">Tools & Other</h3>
+                    <div class="skill-list">
+                        <span class="skill-tag">AI</span>
+                        <span class="skill-tag">Linux</span>
+                        <span class="skill-tag">Wireshark</span>
+                        <span class="skill-tag">Burp Suite</span>
+                        <span class="skill-tag">Metasploit</span>
+                        <span class="skill-tag">VS Code</span>
+                        <span class="skill-tag">Figma</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">// Portfolio</div>
+                <h2 class="section-title">Featured Projects</h2>
+                <p class="section-subtitle">A selection of my recent work and contributions</p>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card" data-href="https://www.dccablellc.com/">
+                    <div class="project-image">
+                        <iframe src="https://www.dccablellc.com/" title="Company Website Preview" loading="lazy"></iframe>
+                        <a class="image-link" href="https://www.dccablellc.com/" target="_blank" rel="noopener" aria-label="Open Company Website"></a>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Company Website</h3>
+                        <p class="project-role">Role: Full Development</p>
+                        <p class="project-description">Built a conversion-focused company site that moved the business off spreadsheets and into a real funnel, with fast pages, clear CTAs, and automatic lead routing.</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">React</span>
+                            <span class="tech-badge">Resend</span>
+                            <span class="tech-badge">Vite</span>
+                            <span class="tech-badge">Accessibility</span>
+                        </div>
+                        <a href="https://www.dccablellc.com/" class="project-link" target="_blank" rel="noopener">View Project →</a>
+                    </div>
+                </div>
+                <div class="project-card" data-modal="invoice">
+                    <div class="project-image">
+                        <img src="assets/invoice.png" alt="Invoice generator preview">
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Invoice Generator App</h3>
+                        <p class="project-role">Role: Full Development</p>
+                        <p class="project-description">Created a clean, one-click invoicing flow that turned messy manual billing into branded PDFs, auto-numbered invoices, and a searchable client history.</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">React</span>
+                            <span class="tech-badge">Supabase</span>
+                            <span class="tech-badge">Supabase Auth</span>
+                            <span class="tech-badge">Supabase Storage</span>
+                            <span class="tech-badge">Vite</span>
+                            <span class="tech-badge">PDF Export</span>
+                            <span class="tech-badge">Email Templates</span>
+                            <span class="tech-badge">Accessibility</span>
+                        </div>
+                        <div class="project-actions">
+                            <button class="project-link" data-modal="invoice">View Project →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card" data-modal="finance">
+                    <div class="project-image">
+                        <img src="assets/finance.png" alt="Financial management system preview">
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Company Financial Management System</h3>
+                        <p class="project-role">Role: Full Development</p>
+                        <p class="project-description">Centralized cash flow, expenses, and approvals into one dashboard so leadership could forecast with confidence and close the month faster.</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">React</span>
+                            <span class="tech-badge">Supabase</span>
+                            <span class="tech-badge">Supabase Auth</span>
+                            <span class="tech-badge">Supabase Storage</span>
+                            <span class="tech-badge">Vite</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                            <span class="tech-badge">Charts</span>
+                            <span class="tech-badge">Accessibility</span>
+                        </div>
+                        <div class="project-actions">
+                            <button class="project-link" data-modal="finance">View Project →</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card" data-href="https://critografia-sxyi.vercel.app/">
+                    <div class="project-image">
+                        <iframe src="https://critografia-sxyi.vercel.app/" title="Post-Quantic Cybersecurity Preview" loading="lazy"></iframe>
+                        <a class="image-link" href="https://critografia-sxyi.vercel.app/" target="_blank" rel="noopener" aria-label="Open Post-Quantic Cybersecurity Presentation"></a>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Interactive Presentation in Post-Quantic Cybersecurity</h3>
+                        <p class="project-role">Role: Full Development</p>
+                        <p class="project-description">Turned a dense topic into an interactive story with live demos, animations, and checkpoints that kept a non-technical audience engaged and informed.</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">HTML</span>
+                            <span class="tech-badge">CSS</span>
+                            <span class="tech-badge">JavaScript</span>
+                            <span class="tech-badge">CSS Animations</span>
+                            <span class="tech-badge">Accessibility</span>
+                        </div>
+                        <a href="https://critografia-sxyi.vercel.app/" class="project-link" target="_blank" rel="noopener">View Project →</a>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image"></div>
+                    <div class="project-content">
+                        <h3 class="project-title">ISMS for Various Mock Companies</h3>
+                        <p class="project-role">Role: Auditor</p>
+                        <p class="project-description">Designed ISMS frameworks and audit packs that helped mock organizations map risks, close gaps, and prove readiness for compliance reviews.</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">PILAR</span>
+                            <span class="tech-badge">DORA</span>
+                            <span class="tech-badge">Risk Register</span>
+                            <span class="tech-badge">Policy Suite</span>
+                            <span class="tech-badge">ISO 27001</span>
+                            <span class="tech-badge">Asset Inventory</span>
+                            <span class="tech-badge">Accessibility</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image"></div>
+                    <div class="project-content">
+                        <h3 class="project-title">Bored? Play Snake</h3>
+                        <p class="project-role">Role: Fun Side Quest</p>
+                        <p class="project-description">A playful mini-game built into the site for quick breaks, fast reflexes, and a little nostalgia.</p>
+                        <div class="project-actions">
+                            <button class="game-button in-project" id="gameButton" title="Play CyberSnake">Play Snake</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Arena Section -->
+    <section id="game-arena" class="game-arena-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">// Snake Arena</div>
+                <h2 class="section-title">Playfield</h2>
+                <p class="section-subtitle">Starts when you hit “Play Snake” in Projects</p>
+            </div>
+            <div class="game-arena" id="gameArena"></div>
+            <p class="arena-help" id="arenaHelp">Controls: Arrow Keys / WASD to move, Space for turbo, any other key to exit turbo.</p>
+            <button class="arena-close" id="arenaClose">Close Game</button>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="section-header">
+                    <div class="section-tag">// Get In Touch</div>
+                    <h2 class="section-title">Let's Connect</h2>
+                    <p class="section-subtitle">Open to new opportunities and collaborations</p>
+                </div>
+                <div class="contact-grid">
+                    <a href="mailto:vmkrasovsky@yahoo.com" class="contact-item">
+                        <div class="contact-icon">@</div>
+                        <div class="contact-label">Email</div>
+                        <div class="contact-value">vmkrasovsky@yahoo.com</div>
+                    </a>
+                    <a href="tel:+34671278686" class="contact-item">
+                        <div class="contact-icon">☎</div>
+                        <div class="contact-label">Phone</div>
+                        <div class="contact-value">+34 (671-278-686)</div>
+                    </a>
+                    <a href="https://github.com/vykkras" class="contact-item" target="_blank" rel="noopener">
+                        <div class="contact-icon">&lt;/&gt;</div>
+                        <div class="contact-label">GitHub</div>
+                        <div class="contact-value">@vykkras</div>
+                    </a>
+                    <a href="https://www.linkedin.com/in/victor-llivina-051166245" class="contact-item" target="_blank" rel="noopener">
+                        <div class="contact-icon">in</div>
+                        <div class="contact-label">LinkedIn</div>
+                        <div class="contact-value">/in/victor-llivina-051166245</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Modal -->
+    <div class="project-modal" id="projectModal" aria-hidden="true">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button class="modal-close" id="modalClose" aria-label="Close">X</button>
+            <h3 class="modal-title" id="modalTitle"></h3>
+            <p class="modal-subtitle" id="modalSubtitle"></p>
+            <div class="modal-section-title">Why I Built It</div>
+            <p id="modalStory"></p>
+            <div class="modal-section-title">Core Functions</div>
+            <div class="modal-list" id="modalList"></div>
+            <div class="modal-actions">
+                <a class="project-secondary" id="modalDemo" href="#">Request Demo</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Score Display -->
+    <div class="game-score-display" id="gameScore">
+        SCORE: <span id="score">0</span><br>
+        HIGH: <span id="highScore">0</span>
+    </div>
+
+    <!-- Game Instructions -->
+    <div class="game-instructions" id="gameInstructions">
+        <p>Press Arrow Keys or WASD to Start!</p>
+    </div>
+
+    <!-- Game Over Message -->
+    <div class="game-over-message" id="gameOverMessage">
+        <h2>GAME OVER</h2>
+        <p>Final Score: <span id="finalScore">0</span></p>
+        <button class="restart-button" onclick="restartGame()">Play Again</button>
+        <button class="restart-button" id="closeGameFromOver">Close Game</button>
+    </div>
+
+    <script>
+        // On-Page Snake Game
+        let snake = [];
+        let snakeElements = [];
+        let foodElement = null;
+        let enemies = [];
+        let enemyElements = [];
+        let velocity = { x: 0, y: 0 };
+        let score = 0;
+        let highScore = 0;
+        let gameRunning = false;
+        let gameLoop;
+        const gridSize = 32;
+        const normalSpeed = 120;
+        const turboSpeed = 60;
+        let currentSpeed = normalSpeed;
+
+        const gameButton = document.getElementById('gameButton');
+        const scoreDisplay = document.getElementById('gameScore');
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('highScore');
+        const gameOverMessage = document.getElementById('gameOverMessage');
+        const finalScoreElement = document.getElementById('finalScore');
+        const gameInstructions = document.getElementById('gameInstructions');
+        const gameArena = document.getElementById('gameArena');
+        const arenaHelp = document.getElementById('arenaHelp');
+        const gameArenaSection = document.getElementById('game-arena');
+        const arenaClose = document.getElementById('arenaClose');
+        const closeGameFromOver = document.getElementById('closeGameFromOver');
+
+        gameButton.addEventListener('click', toggleGame);
+
+        function toggleGame() {
+            if (!gameRunning) {
+                startGame();
+            } else {
+                endGame();
+            }
+        }
+
+        function startGame() {
+            const startX = gridSize * 5;
+            const startY = gridSize * 5;
+            
+            snake = [
+                { x: startX, y: startY },
+                { x: startX - gridSize, y: startY },
+                { x: startX - gridSize * 2, y: startY }
+            ];
+            velocity = { x: 0, y: 0 }; // Don't move until key press
+            score = 0;
+            gameRunning = true;
+            gameArenaSection.classList.add('active');
+            arenaHelp.style.display = 'block';
+            gameArenaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Update UI
+            gameButton.classList.add('playing');
+            gameButton.textContent = 'Stop Game';
+            scoreDisplay.classList.add('active');
+            scoreElement.textContent = score;
+            highScoreElement.textContent = highScore;
+            gameOverMessage.classList.remove('active');
+            gameInstructions.classList.add('active'); // Show instructions
+            gameInstructions.querySelector('p').textContent = 'Move with Arrow Keys or WASD. Space = Turbo.';
+
+            // Create snake segments
+            createSnakeElements();
+            spawnFood();
+            createEnemies();
+
+            // Start game loop
+            currentSpeed = normalSpeed;
+            gameLoop = setInterval(update, currentSpeed);
+        }
+
+        function endGame() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            gameButton.classList.remove('playing');
+            gameButton.textContent = 'Play Snake';
+            scoreDisplay.classList.remove('active');
+            gameInstructions.classList.remove('active');
+            gameArenaSection.classList.remove('active');
+            arenaHelp.style.display = 'none';
+            clearSnakeElements();
+            clearEnemies();
+            if (foodElement) {
+                foodElement.remove();
+                foodElement = null;
+            }
+        }
+
+        function restartGame() {
+            endGame();
+            startGame();
+        }
+
+        function createSnakeElements() {
+            clearSnakeElements();
+            snake.forEach((segment, index) => {
+                const segmentEl = document.createElement('div');
+                segmentEl.className = 'snake-segment';
+                segmentEl.style.left = segment.x + 'px';
+                segmentEl.style.top = segment.y + 'px';
+                
+                const opacity = 1 - (index / snake.length) * 0.4;
+                segmentEl.style.background = `linear-gradient(135deg, rgba(0, 217, 255, ${opacity}), rgba(124, 58, 237, ${opacity}))`;
+                
+                gameArena.appendChild(segmentEl);
+                snakeElements.push(segmentEl);
+            });
+        }
+
+        function clearSnakeElements() {
+            snakeElements.forEach(el => el.remove());
+            snakeElements = [];
+        }
+
+        function update() {
+            if (!gameRunning) return;
+
+            // Don't move until player presses a key
+            if (velocity.x === 0 && velocity.y === 0) {
+                return;
+            }
+
+            const arenaRect = gameArena.getBoundingClientRect();
+            const arenaWidth = arenaRect.width;
+            const arenaHeight = arenaRect.height;
+
+            // Calculate new head position
+            const head = {
+                x: snake[0].x + velocity.x,
+                y: snake[0].y + velocity.y
+            };
+
+            // Check wall collision
+            if (head.x < 0 || head.x >= arenaWidth - gridSize ||
+                head.y < 0 || head.y >= arenaHeight - gridSize) {
+                gameOver();
+                return;
+            }
+
+            // Check self collision
+            for (let i = 1; i < snake.length; i++) {
+                if (Math.abs(head.x - snake[i].x) < gridSize && 
+                    Math.abs(head.y - snake[i].y) < gridSize) {
+                    gameOver();
+                    return;
+                }
+            }
+
+            // Add new head
+            snake.unshift(head);
+
+            // Check food collision
+            if (foodElement) {
+                const foodRect = foodElement.getBoundingClientRect();
+                const foodX = foodRect.left - arenaRect.left;
+                const foodY = foodRect.top - arenaRect.top;
+                if (Math.abs(head.x - foodX) < gridSize && 
+                    Math.abs(head.y - foodY) < gridSize) {
+                    score++;
+                    scoreElement.textContent = score;
+                    if (score > highScore) {
+                        highScore = score;
+                        highScoreElement.textContent = highScore;
+                    }
+                    foodElement.remove();
+                    spawnFood();
+                } else {
+                    // Remove tail if no food eaten
+                    snake.pop();
+                }
+            } else {
+                snake.pop();
+            }
+
+            // Update visual elements
+            updateSnakeElements();
+            updateEnemies(arenaWidth, arenaHeight);
+
+            if (checkEnemyCollision(head)) {
+                gameOver();
+            }
+        }
+
+        function updateSnakeElements() {
+            // Remove excess elements or add new ones
+            while (snakeElements.length < snake.length) {
+                const segmentEl = document.createElement('div');
+                segmentEl.className = 'snake-segment';
+                gameArena.appendChild(segmentEl);
+                snakeElements.push(segmentEl);
+            }
+            while (snakeElements.length > snake.length) {
+                const removed = snakeElements.pop();
+                removed.remove();
+            }
+
+            // Update positions
+            snake.forEach((segment, index) => {
+                if (snakeElements[index]) {
+                    snakeElements[index].style.left = segment.x + 'px';
+                    snakeElements[index].style.top = segment.y + 'px';
+                    const opacity = 1 - (index / snake.length) * 0.4;
+                    snakeElements[index].style.background = `linear-gradient(135deg, rgba(0, 217, 255, ${opacity}), rgba(124, 58, 237, ${opacity}))`;
+                }
+            });
+        }
+
+        function spawnFood() {
+            let attempts = 0;
+            let foodPos;
+            
+            // Try to find a safe position away from edges and text
+            while (attempts < 100) {
+                const arenaRect = gameArena.getBoundingClientRect();
+                foodPos = {
+                    x: Math.floor(Math.random() * (arenaRect.width - gridSize) / gridSize) * gridSize,
+                    y: Math.floor(Math.random() * (arenaRect.height - gridSize) / gridSize) * gridSize
+                };
+
+                // Check if position is safe (not on text and not too close to snake)
+                let tooCloseToSnake = false;
+                for (let segment of snake) {
+                    if (Math.abs(foodPos.x - segment.x) < gridSize * 3 && 
+                        Math.abs(foodPos.y - segment.y) < gridSize * 3) {
+                        tooCloseToSnake = true;
+                        break;
+                    }
+                }
+
+                if (!tooCloseToSnake) {
+                    break;
+                }
+                attempts++;
+            }
+
+            // Fallback to a simple position if we couldn't find a good spot
+            if (attempts >= 100) {
+                foodPos = { x: gridSize * 6, y: gridSize * 6 };
+            }
+
+            // Create robot food
+            foodElement = document.createElement('div');
+            foodElement.className = 'robot-food';
+            foodElement.style.left = foodPos.x + 'px';
+            foodElement.style.top = foodPos.y + 'px';
+            foodElement.innerHTML = `
+                <svg width="32" height="32" viewBox="0 0 20 20">
+                    <rect x="2" y="4" width="16" height="12" fill="#ff3b3b" rx="2"/>
+                    <rect x="5" y="7" width="3" height="3" fill="#00d9ff"/>
+                    <rect x="12" y="7" width="3" height="3" fill="#00d9ff"/>
+                    <line x1="10" y1="2" x2="10" y2="4" stroke="#ff3b3b" stroke-width="2"/>
+                    <circle cx="10" cy="2" r="2" fill="#00d9ff"/>
+                </svg>
+            `;
+            gameArena.appendChild(foodElement);
+        }
+
+        function createEnemies() {
+            clearEnemies();
+            const arenaRect = gameArena.getBoundingClientRect();
+            const enemyCount = 2;
+            const enemySpeed = 6;
+            for (let i = 0; i < enemyCount; i++) {
+                const enemy = {
+                    x: Math.floor(Math.random() * (arenaRect.width - gridSize) / gridSize) * gridSize,
+                    y: Math.floor(Math.random() * (arenaRect.height - gridSize) / gridSize) * gridSize,
+                    vx: Math.random() > 0.5 ? enemySpeed : -enemySpeed,
+                    vy: Math.random() > 0.5 ? enemySpeed : -enemySpeed
+                };
+                enemies.push(enemy);
+
+                const enemyEl = document.createElement('div');
+                enemyEl.className = 'alien-enemy';
+                enemyEl.style.left = enemy.x + 'px';
+                enemyEl.style.top = enemy.y + 'px';
+                enemyEl.innerHTML = `
+                    <svg width="32" height="32" viewBox="0 0 20 20">
+                        <rect x="3" y="4" width="14" height="12" fill="#22c55e" rx="3"/>
+                        <rect x="6" y="8" width="3" height="3" fill="#0b2f1b"/>
+                        <rect x="11" y="8" width="3" height="3" fill="#0b2f1b"/>
+                        <rect x="7" y="13" width="6" height="2" fill="#0b2f1b"/>
+                    </svg>
+                `;
+                gameArena.appendChild(enemyEl);
+                enemyElements.push(enemyEl);
+            }
+        }
+
+        function updateEnemies(arenaWidth, arenaHeight) {
+            enemies.forEach((enemy, index) => {
+                enemy.x += enemy.vx;
+                enemy.y += enemy.vy;
+
+                if (enemy.x <= 0 || enemy.x >= arenaWidth - gridSize) {
+                    enemy.vx *= -1;
+                    enemy.x = Math.max(0, Math.min(enemy.x, arenaWidth - gridSize));
+                }
+                if (enemy.y <= 0 || enemy.y >= arenaHeight - gridSize) {
+                    enemy.vy *= -1;
+                    enemy.y = Math.max(0, Math.min(enemy.y, arenaHeight - gridSize));
+                }
+
+                if (enemyElements[index]) {
+                    enemyElements[index].style.left = enemy.x + 'px';
+                    enemyElements[index].style.top = enemy.y + 'px';
+                }
+            });
+        }
+
+        function checkEnemyCollision(head) {
+            return enemies.some((enemy) =>
+                Math.abs(head.x - enemy.x) < gridSize &&
+                Math.abs(head.y - enemy.y) < gridSize
+            );
+        }
+
+        function clearEnemies() {
+            enemyElements.forEach((el) => el.remove());
+            enemyElements = [];
+            enemies = [];
+        }
+
+        function setGameSpeed(speed) {
+            if (currentSpeed === speed) return;
+            currentSpeed = speed;
+            clearInterval(gameLoop);
+            gameLoop = setInterval(update, currentSpeed);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            finalScoreElement.textContent = score;
+            gameOverMessage.classList.add('active');
+            gameInstructions.classList.remove('active'); // Hide instructions
+            gameArenaSection.classList.remove('active');
+            arenaHelp.style.display = 'none';
+            setTimeout(() => {
+                clearSnakeElements();
+                clearEnemies();
+                if (foodElement) {
+                    foodElement.remove();
+                    foodElement = null;
+                }
+                gameButton.classList.remove('playing');
+                gameButton.textContent = 'Play Snake';
+                scoreDisplay.classList.remove('active');
+            }, 100);
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (!gameRunning) return;
+
+            let keyHandled = false;
+
+            switch (e.key) {
+                case ' ':
+                    setGameSpeed(turboSpeed);
+                    keyHandled = true;
+                    e.preventDefault();
+                    break;
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    if (velocity.y === 0) {
+                        velocity = { x: 0, y: -gridSize };
+                        keyHandled = true;
+                        e.preventDefault();
+                    }
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    if (velocity.y === 0) {
+                        velocity = { x: 0, y: gridSize };
+                        keyHandled = true;
+                        e.preventDefault();
+                    }
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    if (velocity.x === 0) {
+                        velocity = { x: -gridSize, y: 0 };
+                        keyHandled = true;
+                        e.preventDefault();
+                    }
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    if (velocity.x === 0) {
+                        velocity = { x: gridSize, y: 0 };
+                        keyHandled = true;
+                        e.preventDefault();
+                    }
+                    break;
+            }
+
+            // Hide instructions on first movement
+            if (keyHandled) {
+                gameInstructions.classList.remove('active');
+            }
+
+            if (e.key !== ' ' && currentSpeed === turboSpeed) {
+                setGameSpeed(normalSpeed);
+            }
+        });
+
+        arenaClose.addEventListener('click', () => {
+            endGame();
+            gameOverMessage.classList.remove('active');
+        });
+
+        closeGameFromOver.addEventListener('click', () => {
+            endGame();
+            gameOverMessage.classList.remove('active');
+        });
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const navHeight = document.querySelector('nav').offsetHeight;
+            const sectionPosition = section.offsetTop - navHeight;
+            
+            window.scrollTo({
+                top: sectionPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe skill categories and project cards
+        document.querySelectorAll('.skill-category, .project-card').forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = `all 0.6s ease ${index * 0.1}s`;
+            observer.observe(el);
+        });
+
+        // Active nav button on scroll
+        window.addEventListener('scroll', () => {
+            const sections = ['home', 'skills', 'projects', 'contact'];
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const navHeight = document.querySelector('nav').offsetHeight;
+            
+            let current = '';
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                const sectionTop = section.offsetTop - navHeight - 100;
+                if (window.scrollY >= sectionTop) {
+                    current = sectionId;
+                }
+            });
+
+            navButtons.forEach((btn, index) => {
+                if (sections[index] === current) {
+                    btn.style.color = 'var(--accent-primary)';
+                    btn.style.borderColor = 'var(--accent-primary)';
+                } else {
+                    btn.style.color = 'var(--text-secondary)';
+                    btn.style.borderColor = 'transparent';
+                }
+            });
+        });
+
+        // Project modal data + behavior
+        const modalData = {
+            invoice: {
+                title: 'Invoice Generator App',
+                subtitle: 'Internal ops tool built for speed, clarity, and clean audit trails.',
+                story: 'I built this after noticing how much time we lost to manual billing and follow-ups. Even though it was not requested, I wanted a single, repeatable workflow that anyone on the team could use without training.',
+                demoSubject: 'Demo Request - Invoice Generator',
+                functions: [
+                    'Create, modify, delete invoices',
+                    'Search by client, date range, status, amount',
+                    'Export to PDF and Excel',
+                    'Role-based access: admin and user',
+                    'Authentication and session controls',
+                    'File and folder organization for records',
+                    'Automated numbering and due-date rules',
+                    'Quick resend and activity history'
+                ]
+            },
+            finance: {
+                title: 'Company Financial Management System',
+                subtitle: 'Unified finance dashboard for forecasting, approvals, and payroll.',
+                story: 'I built this to stop the chaos of scattered spreadsheets and late close-outs. The goal was to give leadership a single source of truth even though it was not a formal request.',
+                demoSubject: 'Demo Request - Financial Management System',
+                functions: [
+                    'Income and expense tracking',
+                    'Budget vs actual comparisons',
+                    'Invoice and payment status overview',
+                    'Approval workflows for spend',
+                    'Payroll scheduling and export',
+                    'Role-based access and audit logs',
+                    'Multi-department cost centers',
+                    'Monthly close checklist and reports'
+                ]
+            }
+        };
+
+        const projectModal = document.getElementById('projectModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalSubtitle = document.getElementById('modalSubtitle');
+        const modalStory = document.getElementById('modalStory');
+        const modalList = document.getElementById('modalList');
+        const modalDemo = document.getElementById('modalDemo');
+
+        function openModal(key) {
+            const data = modalData[key];
+            if (!data) return;
+            modalTitle.textContent = data.title;
+            modalSubtitle.textContent = data.subtitle;
+            modalStory.textContent = data.story;
+            modalList.innerHTML = data.functions.map((item) => `<span>${item}</span>`).join('');
+            modalDemo.href = `mailto:vmkrasovsky@yahoo.com?subject=${encodeURIComponent(data.demoSubject)}`;
+            projectModal.classList.add('active');
+            projectModal.setAttribute('aria-hidden', 'false');
+        }
+
+        document.querySelectorAll('[data-modal]').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openModal(btn.getAttribute('data-modal'));
+            });
+        });
+
+
+        document.querySelectorAll('.project-card[data-modal]').forEach((card) => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('a, button')) return;
+                openModal(card.getAttribute('data-modal'));
+            });
+        });
+
+        document.querySelectorAll('.project-card[data-href]').forEach((card) => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('a, button')) return;
+                const url = card.getAttribute('data-href');
+                if (url) window.open(url, '_blank', 'noopener');
+            });
+        });
+
+        function closeModal() {
+            projectModal.classList.remove('active');
+            projectModal.setAttribute('aria-hidden', 'true');
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        projectModal.addEventListener('click', (e) => {
+            if (e.target === projectModal) closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+    </script>
+</body>
+</html>
