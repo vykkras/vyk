@@ -35,6 +35,11 @@
             overflow-x: hidden;
         }
 
+        body.no-scroll {
+            overflow: hidden;
+            height: 100%;
+        }
+
         /* Animated grid background */
         body::before {
             content: '';
@@ -680,12 +685,17 @@
             }
 
             .nav-links {
-                gap: 0.25rem;
+                gap: 0.5rem;
+                overflow-x: auto;
+                overflow-y: hidden;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
             }
 
             .nav-btn {
                 padding: 0.5rem 1rem;
                 font-size: 0.8rem;
+                flex-shrink: 0;
             }
 
             section {
@@ -703,6 +713,14 @@
 
             .contact-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .nav-links::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-links {
+                scrollbar-width: none;
             }
         }
 
@@ -1317,6 +1335,9 @@
             gameArenaSection.classList.add('active');
             arenaHelp.style.display = 'block';
             gameArenaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (window.innerWidth <= 768) {
+                document.body.classList.add('no-scroll');
+            }
 
             // Update UI
             gameButton.classList.add('playing');
@@ -1347,6 +1368,7 @@
             gameInstructions.classList.remove('active');
             gameArenaSection.classList.remove('active');
             arenaHelp.style.display = 'none';
+            document.body.classList.remove('no-scroll');
             clearSnakeElements();
             clearEnemies();
             if (foodElement) {
@@ -1604,6 +1626,7 @@
             gameInstructions.classList.remove('active'); // Hide instructions
             gameArenaSection.classList.remove('active');
             arenaHelp.style.display = 'none';
+            document.body.classList.remove('no-scroll');
             setTimeout(() => {
                 clearSnakeElements();
                 clearEnemies();
@@ -1667,8 +1690,8 @@
                     break;
             }
 
-            // Hide instructions on first movement
-            if (keyHandled) {
+            // Hide instructions on first movement (desktop only)
+            if (keyHandled && window.innerWidth > 768) {
                 gameInstructions.classList.remove('active');
             }
 
@@ -1725,6 +1748,12 @@
 
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
+        }, { passive: true });
+
+        gameArena.addEventListener('touchstart', () => {
+            if (gameRunning) {
+                gameInstructions.classList.remove('active');
+            }
         }, { passive: true });
 
         function scrollToSection(sectionId) {
