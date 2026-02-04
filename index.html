@@ -844,10 +844,17 @@
             font-weight: 600;
         }
 
+        .snake-high-score {
+            margin-top: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
         .snake-segment {
             position: absolute;
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
             border-radius: 4px;
             z-index: 9998;
             pointer-events: none;
@@ -856,16 +863,16 @@
 
         .robot-food {
             position: absolute;
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
             z-index: 9998;
             pointer-events: none;
         }
 
         .alien-enemy {
             position: absolute;
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
             z-index: 9998;
             pointer-events: none;
         }
@@ -891,6 +898,14 @@
             overflow: hidden;
             box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.35);
             touch-action: none;
+        }
+
+        @media (min-width: 900px) {
+            .game-arena {
+                width: 420px;
+                height: 420px;
+                margin: 0 auto;
+            }
         }
 
         .arena-help {
@@ -1010,31 +1025,7 @@
         }
 
         .game-instructions {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(17, 24, 39, 0.95);
-            border: 2px solid var(--accent-primary);
-            border-radius: 12px;
-            padding: 2rem 3rem;
-            font-family: 'JetBrains Mono', monospace;
-            text-align: center;
-            z-index: 9997;
             display: none;
-            box-shadow: 0 0 50px rgba(0, 217, 255, 0.5);
-            backdrop-filter: blur(10px);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .game-instructions.active {
-            display: block;
-        }
-
-        .game-instructions p {
-            color: var(--accent-primary);
-            font-size: 1.3rem;
-            margin: 0;
         }
 
         .game-over-message {
@@ -1335,6 +1326,7 @@
                         <div class="project-actions">
                             <button class="game-button in-project" id="gameButton" title="Play CyberSnake" data-i18n="play_snake">Play Snake</button>
                         </div>
+                        <div class="snake-high-score"><span data-i18n="high_score">High Score</span>: <span id="snakeHighScore">0</span></div>
                     </div>
                 </div>
             </div>
@@ -1430,9 +1422,7 @@
     </div>
 
     <!-- Game Instructions -->
-    <div class="game-instructions" id="gameInstructions">
-        <p data-i18n="game_instructions">Press Arrow Keys or WASD to Start!</p>
-    </div>
+    <div class="game-instructions" id="gameInstructions"></div>
 
     <!-- Game Over Message -->
     <div class="game-over-message" id="gameOverMessage">
@@ -1453,19 +1443,20 @@
         let score = 0;
         let highScore = 0;
         let gameRunning = false;
+        let lastHitTime = 0;
         let gameLoop;
-        const gridSize = 32;
-        const normalSpeed = 120;
-        const turboSpeed = 60;
+        const gridSize = 24;
+        const normalSpeed = 160;
+        const turboSpeed = 90;
         let currentSpeed = normalSpeed;
 
         const gameButton = document.getElementById('gameButton');
         const scoreDisplay = document.getElementById('gameScore');
         const scoreElement = document.getElementById('score');
         const highScoreElement = document.getElementById('highScore');
+        const snakeHighScoreElement = document.getElementById('snakeHighScore');
         const gameOverMessage = document.getElementById('gameOverMessage');
         const finalScoreElement = document.getElementById('finalScore');
-        const gameInstructions = document.getElementById('gameInstructions');
         const gameArena = document.getElementById('gameArena');
         const mobileGameOverlay = document.getElementById('mobileGameOverlay');
         const mobileGameArena = document.getElementById('mobileGameArena');
@@ -1526,9 +1517,8 @@
             scoreDisplay.classList.add('active');
             scoreElement.textContent = score;
             highScoreElement.textContent = highScore;
+            snakeHighScoreElement.textContent = highScore;
             gameOverMessage.classList.remove('active');
-            gameInstructions.classList.add('active'); // Show instructions
-            gameInstructions.querySelector('p').textContent = translations[currentLang].game_instructions_move;
 
             // Create snake segments
             createSnakeElements();
@@ -1546,7 +1536,6 @@
             gameButton.classList.remove('playing');
             updateGameButtonLabel();
             scoreDisplay.classList.remove('active');
-            gameInstructions.classList.remove('active');
             if (isMobileGame) {
                 mobileGameOverlay.classList.remove('active');
                 mobileGameOverlay.setAttribute('aria-hidden', 'true');
@@ -1561,6 +1550,7 @@
                 foodElement.remove();
                 foodElement = null;
             }
+            snakeHighScoreElement.textContent = highScore;
         }
 
         function restartGame() {
@@ -1638,6 +1628,7 @@
                     if (score > highScore) {
                         highScore = score;
                         highScoreElement.textContent = highScore;
+                        snakeHighScoreElement.textContent = highScore;
                     }
                     foodElement.remove();
                     spawnFood();
@@ -1653,9 +1644,7 @@
             updateSnakeElements();
             updateEnemies(arenaWidth, arenaHeight);
 
-            if (checkEnemyCollision(head)) {
-                gameOver();
-            }
+            handleEnemyCollision();
         }
 
         function updateSnakeElements() {
@@ -1721,7 +1710,7 @@
             foodElement.style.left = foodPos.x + 'px';
             foodElement.style.top = foodPos.y + 'px';
             foodElement.innerHTML = `
-                <svg width="32" height="32" viewBox="0 0 20 20">
+                <svg width="24" height="24" viewBox="0 0 20 20">
                     <rect x="2" y="4" width="16" height="12" fill="#ff3b3b" rx="2"/>
                     <rect x="5" y="7" width="3" height="3" fill="#00d9ff"/>
                     <rect x="12" y="7" width="3" height="3" fill="#00d9ff"/>
@@ -1751,7 +1740,7 @@
                 enemyEl.style.left = enemy.x + 'px';
                 enemyEl.style.top = enemy.y + 'px';
                 enemyEl.innerHTML = `
-                    <svg width="32" height="32" viewBox="0 0 20 20">
+                    <svg width="24" height="24" viewBox="0 0 20 20">
                         <rect x="3" y="4" width="14" height="12" fill="#22c55e" rx="3"/>
                         <rect x="6" y="8" width="3" height="3" fill="#0b2f1b"/>
                         <rect x="11" y="8" width="3" height="3" fill="#0b2f1b"/>
@@ -1784,11 +1773,27 @@
             });
         }
 
-        function checkEnemyCollision(head) {
-            return enemies.some((enemy) =>
-                Math.abs(head.x - enemy.x) < gridSize &&
-                Math.abs(head.y - enemy.y) < gridSize
+        function handleEnemyCollision() {
+            const now = Date.now();
+            if (now - lastHitTime < 400) return;
+
+            const hit = enemies.some((enemy) =>
+                snake.some((segment) =>
+                    Math.abs(segment.x - enemy.x) < gridSize &&
+                    Math.abs(segment.y - enemy.y) < gridSize
+                )
             );
+
+            if (!hit) return;
+
+            lastHitTime = now;
+            const damage = Math.min(3, snake.length - 1);
+            if (damage <= 0) {
+                gameOver();
+                return;
+            }
+            snake.splice(-damage, damage);
+            updateSnakeElements();
         }
 
         function clearEnemies() {
@@ -1809,7 +1814,6 @@
             clearInterval(gameLoop);
             finalScoreElement.textContent = score;
             gameOverMessage.classList.add('active');
-            gameInstructions.classList.remove('active'); // Hide instructions
             if (isMobileGame) {
                 mobileGameOverlay.classList.remove('active');
                 mobileGameOverlay.setAttribute('aria-hidden', 'true');
@@ -1881,10 +1885,6 @@
                     break;
             }
 
-            // Hide instructions on first movement (desktop only)
-            if (keyHandled && window.innerWidth > 768) {
-                gameInstructions.classList.remove('active');
-            }
 
             if (e.key !== ' ' && currentSpeed === turboSpeed) {
                 setGameSpeed(normalSpeed);
@@ -1941,11 +1941,6 @@
             touchStartY = touch.clientY;
         }, { passive: true });
 
-        gameArena.addEventListener('touchstart', () => {
-            if (gameRunning) {
-                gameInstructions.classList.remove('active');
-            }
-        }, { passive: true });
 
         function setDirection(dir) {
             if (!gameRunning) return;
@@ -2107,6 +2102,7 @@
                 contact_linkedin: 'LinkedIn',
                 score_label: 'SCORE',
                 high_label: 'HIGH',
+                high_score: 'High Score',
                 game_instructions: 'Press Arrow Keys or WASD to Start!',
                 game_instructions_move: 'Move with Arrow Keys or WASD. Space = Turbo.',
                 game_over: 'GAME OVER',
@@ -2176,6 +2172,7 @@
                 contact_linkedin: 'LinkedIn',
                 score_label: 'PUNTOS',
                 high_label: 'RÉCORD',
+                high_score: 'Récord',
                 game_instructions: '¡Presiona Flechas o WASD para comenzar!',
                 game_instructions_move: 'Mueve con Flechas o WASD. Espacio = Turbo.',
                 game_over: 'FIN DEL JUEGO',
