@@ -160,8 +160,7 @@
 
         /* Hero Section */
         #home {
-            background: radial-gradient(ellipse at top, rgba(124, 58, 237, 0.15), transparent 50%),
-                        radial-gradient(ellipse at bottom, rgba(0, 217, 255, 0.1), transparent 50%);
+            background: none;
         }
 
         .hero-content {
@@ -251,13 +250,15 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
             animation: fadeInUp 0.8s ease-out 0.6s both;
+            box-shadow: none;
+            filter: none;
+            outline: none;
         }
 
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 50px rgba(0, 217, 255, 0.5);
+            box-shadow: none;
         }
 
         /* Section Headers */
@@ -803,6 +804,7 @@
             position: relative;
             overflow: hidden;
             box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.35);
+            touch-action: none;
         }
 
         .arena-help {
@@ -930,10 +932,11 @@
         <div class="nav-container">
             <div class="logo">&lt;/VYK&gt;</div>
             <div class="nav-links">
-                <button class="nav-btn" onclick="scrollToSection('home')">Home</button>
-                <button class="nav-btn" onclick="scrollToSection('skills')">Skills</button>
-                <button class="nav-btn" onclick="scrollToSection('projects')">Projects</button>
-                <button class="nav-btn" onclick="scrollToSection('contact')">Contact</button>
+                <button class="nav-btn" onclick="scrollToSection('home')" data-i18n="nav_home">Home</button>
+                <button class="nav-btn" onclick="scrollToSection('skills')" data-i18n="nav_skills">Skills</button>
+                <button class="nav-btn" onclick="scrollToSection('projects')" data-i18n="nav_projects">Projects</button>
+                <button class="nav-btn" onclick="scrollToSection('contact')" data-i18n="nav_contact">Contact</button>
+                <button class="nav-btn" id="langToggle" aria-label="Switch language">Español</button>
             </div>
         </div>
     </nav>
@@ -942,21 +945,21 @@
     <section id="home">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-tag">// Software Engineer • Cybersecurity • Product Builder</div>
+                <div class="hero-tag" data-i18n="hero_tag">// Software Engineer • Cybersecurity • Product Builder</div>
                 <h1 class="hero-title">Victor Llivina</h1>
-                <p class="hero-subtitle">Software Engineering at FIU • M.S. Cybersecurity at UEM • Project Manager at DC Cable</p>
+                <p class="hero-subtitle" data-i18n="hero_subtitle">Software Engineering at FIU • M.S. Cybersecurity at UEM • Project Manager at DC Cable</p>
                 <div class="hero-badges">
-                    <span class="hero-badge">Ethical Hacking</span>
-                    <span class="hero-badge">Digital Forensics</span>
-                    <span class="hero-badge">Software Development</span>
-                    <span class="hero-badge">AI</span>
-                    <span class="hero-badge">UI/UX Design</span>
-                    <span class="hero-badge">Post-Quantic Cryptography</span>
-                    <span class="hero-badge">Game Development</span>
+                    <span class="hero-badge" data-i18n="badge_ethics">Ethical Hacking</span>
+                    <span class="hero-badge" data-i18n="badge_forensics">Digital Forensics</span>
+                    <span class="hero-badge" data-i18n="badge_dev">Software Development</span>
+                    <span class="hero-badge" data-i18n="badge_ai">AI</span>
+                    <span class="hero-badge" data-i18n="badge_uiux">UI/UX Design</span>
+                    <span class="hero-badge" data-i18n="badge_pqc">Post-Quantic Cryptography</span>
+                    <span class="hero-badge" data-i18n="badge_gamedev">Game Development</span>
                 </div>
-                <p class="hero-interests">I build secure, user-focused systems that turn complex problems into simple workflows. My work blends engineering, cybersecurity, and product thinking to ship tools people actually enjoy using.</p>
+                <p class="hero-interests" data-i18n="hero_blurb">I build secure, user-focused systems that turn complex problems into simple workflows. My work blends engineering, cybersecurity, and product thinking to ship tools people actually enjoy using.</p>
                 <button class="cta-button" onclick="scrollToSection('projects')">
-                    View My Work
+                    <span data-i18n="cta_view_work">View My Work</span>
                 </button>
             </div>
             <div class="scroll-indicator">
@@ -969,14 +972,14 @@
     <section id="skills">
         <div class="container">
             <div class="section-header">
-                <div class="section-tag">// Expertise</div>
-                <h2 class="section-title">Technical Skills</h2>
-                <p class="section-subtitle">A comprehensive toolkit for modern software development</p>
+                <div class="section-tag" data-i18n="skills_tag">// Expertise</div>
+                <h2 class="section-title" data-i18n="skills_title">Technical Skills</h2>
+                <p class="section-subtitle" data-i18n="skills_subtitle">A comprehensive toolkit for modern software development</p>
             </div>
             <div class="skills-grid">
                 <div class="skill-category">
                     <div class="skill-icon">&lt;/&gt;</div>
-                    <h3 class="skill-title">Languages</h3>
+                    <h3 class="skill-title" data-i18n="skills_languages">Languages</h3>
                     <div class="skill-list">
                         <span class="skill-tag">Python</span>
                         <span class="skill-tag">JavaScript</span>
@@ -988,7 +991,7 @@
                 </div>
                 <div class="skill-category">
                     <div class="skill-icon">{ }</div>
-                    <h3 class="skill-title">Frontend</h3>
+                    <h3 class="skill-title" data-i18n="skills_frontend">Frontend</h3>
                     <div class="skill-list">
                         <span class="skill-tag">React</span>
                         <span class="skill-tag">Vue.js</span>
@@ -1000,7 +1003,7 @@
                 </div>
                 <div class="skill-category">
                     <div class="skill-icon">[ ]</div>
-                    <h3 class="skill-title">Backend</h3>
+                    <h3 class="skill-title" data-i18n="skills_backend">Backend</h3>
                     <div class="skill-list">
                         <span class="skill-tag">Node.js</span>
                         <span class="skill-tag">Django</span>
@@ -1012,7 +1015,7 @@
                 </div>
                 <div class="skill-category">
                     <div class="skill-icon">#</div>
-                    <h3 class="skill-title">Security</h3>
+                    <h3 class="skill-title" data-i18n="skills_security">Security</h3>
                     <div class="skill-list">
                         <span class="skill-tag">Penetration Testing</span>
                         <span class="skill-tag">Cryptography</span>
@@ -1024,7 +1027,7 @@
                 </div>
                 <div class="skill-category">
                     <div class="skill-icon">☁</div>
-                    <h3 class="skill-title">DevOps & Cloud</h3>
+                    <h3 class="skill-title" data-i18n="skills_devops">DevOps & Cloud</h3>
                     <div class="skill-list">
                         <span class="skill-tag">Docker</span>
                         <span class="skill-tag">Kubernetes</span>
@@ -1036,7 +1039,7 @@
                 </div>
                 <div class="skill-category">
                     <div class="skill-icon">~</div>
-                    <h3 class="skill-title">Tools & Other</h3>
+                    <h3 class="skill-title" data-i18n="skills_tools">Tools & Other</h3>
                     <div class="skill-list">
                         <span class="skill-tag">AI</span>
                         <span class="skill-tag">Linux</span>
@@ -1055,9 +1058,9 @@
     <section id="projects">
         <div class="container">
             <div class="section-header">
-                <div class="section-tag">// Portfolio</div>
-                <h2 class="section-title">Featured Projects</h2>
-                <p class="section-subtitle">A selection of my recent work and contributions</p>
+                <div class="section-tag" data-i18n="projects_tag">// Portfolio</div>
+                <h2 class="section-title" data-i18n="projects_title">Featured Projects</h2>
+                <p class="section-subtitle" data-i18n="projects_subtitle">A selection of my recent work and contributions</p>
             </div>
             <div class="projects-grid">
                 <div class="project-card" data-href="https://www.dccablellc.com/">
@@ -1066,16 +1069,16 @@
                         <a class="image-link" href="https://www.dccablellc.com/" target="_blank" rel="noopener" aria-label="Open Company Website"></a>
                     </div>
                     <div class="project-content">
-                        <h3 class="project-title">Company Website</h3>
-                        <p class="project-role">Role: Full Development</p>
-                        <p class="project-description">Built a conversion-focused company site that moved the business off spreadsheets and into a real funnel, with fast pages, clear CTAs, and automatic lead routing.</p>
+                        <h3 class="project-title" data-i18n="proj_company_title">Company Website</h3>
+                        <p class="project-role" data-i18n="role_full_dev">Role: Full Development</p>
+                        <p class="project-description" data-i18n="proj_company_desc">I created a corporate website for my company to increase the visibility and reach of our projects, while improving communication with potential business partners. The design focuses on a modern, clean, and minimalist aesthetic.</p>
                         <div class="project-tech">
                             <span class="tech-badge">React</span>
                             <span class="tech-badge">Resend</span>
                             <span class="tech-badge">Vite</span>
                             <span class="tech-badge">Accessibility</span>
                         </div>
-                        <a href="https://www.dccablellc.com/" class="project-link" target="_blank" rel="noopener">View Project →</a>
+                        <a href="https://www.dccablellc.com/" class="project-link" target="_blank" rel="noopener" data-i18n="view_project">View Project →</a>
                     </div>
                 </div>
                 <div class="project-card" data-modal="invoice">
@@ -1083,9 +1086,9 @@
                         <img src="assets/invoice.png" alt="Invoice generator preview">
                     </div>
                     <div class="project-content">
-                        <h3 class="project-title">Invoice Generator App</h3>
-                        <p class="project-role">Role: Full Development</p>
-                        <p class="project-description">Created a clean, one-click invoicing flow that turned messy manual billing into branded PDFs, auto-numbered invoices, and a searchable client history.</p>
+                        <h3 class="project-title" data-i18n="proj_invoice_title">Invoice Generator App</h3>
+                        <p class="project-role" data-i18n="role_full_dev">Role: Full Development</p>
+                        <p class="project-description" data-i18n="proj_invoice_desc">Created a clean, one-click invoicing flow that turned messy manual billing into branded PDFs, auto-numbered invoices, and a searchable client history.</p>
                         <div class="project-tech">
                             <span class="tech-badge">React</span>
                             <span class="tech-badge">Supabase</span>
@@ -1097,7 +1100,7 @@
                             <span class="tech-badge">Accessibility</span>
                         </div>
                         <div class="project-actions">
-                            <button class="project-link" data-modal="invoice">View Project →</button>
+                            <button class="project-link" data-modal="invoice" data-i18n="view_project">View Project →</button>
                         </div>
                     </div>
                 </div>
@@ -1106,9 +1109,9 @@
                         <img src="assets/finance.png" alt="Financial management system preview">
                     </div>
                     <div class="project-content">
-                        <h3 class="project-title">Company Financial Management System</h3>
-                        <p class="project-role">Role: Full Development</p>
-                        <p class="project-description">Centralized cash flow, expenses, and approvals into one dashboard so leadership could forecast with confidence and close the month faster.</p>
+                        <h3 class="project-title" data-i18n="proj_finance_title">Company Financial Management System</h3>
+                        <p class="project-role" data-i18n="role_full_dev">Role: Full Development</p>
+                        <p class="project-description" data-i18n="proj_finance_desc">Centralized cash flow, expenses, and approvals into one dashboard so leadership could forecast with confidence and close the month faster.</p>
                         <div class="project-tech">
                             <span class="tech-badge">React</span>
                             <span class="tech-badge">Supabase</span>
@@ -1120,7 +1123,7 @@
                             <span class="tech-badge">Accessibility</span>
                         </div>
                         <div class="project-actions">
-                            <button class="project-link" data-modal="finance">View Project →</button>
+                            <button class="project-link" data-modal="finance" data-i18n="view_project">View Project →</button>
                         </div>
                     </div>
                 </div>
@@ -1130,9 +1133,9 @@
                         <a class="image-link" href="https://critografia-sxyi.vercel.app/" target="_blank" rel="noopener" aria-label="Open Post-Quantic Cybersecurity Presentation"></a>
                     </div>
                     <div class="project-content">
-                        <h3 class="project-title">Interactive Presentation in Post-Quantic Cybersecurity</h3>
-                        <p class="project-role">Role: Full Development</p>
-                        <p class="project-description">Turned a dense topic into an interactive story with live demos, animations, and checkpoints that kept a non-technical audience engaged and informed.</p>
+                        <h3 class="project-title" data-i18n="proj_pqc_title">Interactive Presentation in Post-Quantic Cybersecurity</h3>
+                        <p class="project-role" data-i18n="role_full_dev">Role: Full Development</p>
+                        <p class="project-description" data-i18n="proj_pqc_desc">Turned a dense topic into an interactive story with live demos, animations, and checkpoints that kept a non-technical audience engaged and informed.</p>
                         <div class="project-tech">
                             <span class="tech-badge">HTML</span>
                             <span class="tech-badge">CSS</span>
@@ -1140,15 +1143,15 @@
                             <span class="tech-badge">CSS Animations</span>
                             <span class="tech-badge">Accessibility</span>
                         </div>
-                        <a href="https://critografia-sxyi.vercel.app/" class="project-link" target="_blank" rel="noopener">View Project →</a>
+                        <a href="https://critografia-sxyi.vercel.app/" class="project-link" target="_blank" rel="noopener" data-i18n="view_project">View Project →</a>
                     </div>
                 </div>
                 <div class="project-card">
                     <div class="project-image"></div>
                     <div class="project-content">
-                        <h3 class="project-title">ISMS for Various Mock Companies</h3>
-                        <p class="project-role">Role: Auditor</p>
-                        <p class="project-description">Designed ISMS frameworks and audit packs that helped mock organizations map risks, close gaps, and prove readiness for compliance reviews.</p>
+                        <h3 class="project-title" data-i18n="proj_isms_title">ISMS for Various Mock Companies</h3>
+                        <p class="project-role" data-i18n="role_auditor">Role: Auditor</p>
+                        <p class="project-description" data-i18n="proj_isms_desc">Designed ISMS frameworks and audit packs that helped mock organizations map risks, close gaps, and prove readiness for compliance reviews.</p>
                         <div class="project-tech">
                             <span class="tech-badge">PILAR</span>
                             <span class="tech-badge">DORA</span>
@@ -1163,11 +1166,11 @@
                 <div class="project-card">
                     <div class="project-image"></div>
                     <div class="project-content">
-                        <h3 class="project-title">Bored? Play Snake</h3>
-                        <p class="project-role">Role: Fun Side Quest</p>
-                        <p class="project-description">A playful mini-game built into the site for quick breaks, fast reflexes, and a little nostalgia.</p>
+                        <h3 class="project-title" data-i18n="proj_snake_title">Bored? Play Snake</h3>
+                        <p class="project-role" data-i18n="role_fun">Role: Fun Side Quest</p>
+                        <p class="project-description" data-i18n="proj_snake_desc">A playful mini-game built into the site for quick breaks, fast reflexes, and a little nostalgia.</p>
                         <div class="project-actions">
-                            <button class="game-button in-project" id="gameButton" title="Play CyberSnake">Play Snake</button>
+                            <button class="game-button in-project" id="gameButton" title="Play CyberSnake" data-i18n="play_snake">Play Snake</button>
                         </div>
                     </div>
                 </div>
@@ -1179,13 +1182,13 @@
     <section id="game-arena" class="game-arena-section">
         <div class="container">
             <div class="section-header">
-                <div class="section-tag">// Snake Arena</div>
-                <h2 class="section-title">Playfield</h2>
-                <p class="section-subtitle">Starts when you hit “Play Snake” in Projects</p>
+                <div class="section-tag" data-i18n="arena_tag">// Snake Arena</div>
+                <h2 class="section-title" data-i18n="arena_title">Playfield</h2>
+                <p class="section-subtitle" data-i18n="arena_subtitle">Starts when you hit “Play Snake” in Projects</p>
             </div>
             <div class="game-arena" id="gameArena"></div>
-            <p class="arena-help" id="arenaHelp">Controls: Arrow Keys / WASD to move, Space for turbo, any other key to exit turbo.</p>
-            <button class="arena-close" id="arenaClose">Close Game</button>
+            <p class="arena-help" id="arenaHelp" data-i18n="arena_help">Controls: Arrow Keys / WASD to move, Space for turbo, any other key to exit turbo.</p>
+            <button class="arena-close" id="arenaClose" data-i18n="close_game">Close Game</button>
         </div>
     </section>
 
@@ -1194,29 +1197,29 @@
         <div class="container">
             <div class="contact-content">
                 <div class="section-header">
-                    <div class="section-tag">// Get In Touch</div>
-                    <h2 class="section-title">Let's Connect</h2>
-                    <p class="section-subtitle">Open to new opportunities and collaborations</p>
+                    <div class="section-tag" data-i18n="contact_tag">// Get In Touch</div>
+                    <h2 class="section-title" data-i18n="contact_title">Let's Connect</h2>
+                    <p class="section-subtitle" data-i18n="contact_subtitle">Open to new opportunities and collaborations</p>
                 </div>
                 <div class="contact-grid">
                     <a href="mailto:vmkrasovsky@yahoo.com" class="contact-item">
                         <div class="contact-icon">@</div>
-                        <div class="contact-label">Email</div>
+                        <div class="contact-label" data-i18n="contact_email">Email</div>
                         <div class="contact-value">vmkrasovsky@yahoo.com</div>
                     </a>
                     <a href="tel:+34671278686" class="contact-item">
                         <div class="contact-icon">☎</div>
-                        <div class="contact-label">Phone</div>
+                        <div class="contact-label" data-i18n="contact_phone">Phone</div>
                         <div class="contact-value">+34 (671-278-686)</div>
                     </a>
                     <a href="https://github.com/vykkras" class="contact-item" target="_blank" rel="noopener">
                         <div class="contact-icon">&lt;/&gt;</div>
-                        <div class="contact-label">GitHub</div>
+                        <div class="contact-label" data-i18n="contact_github">GitHub</div>
                         <div class="contact-value">@vykkras</div>
                     </a>
                     <a href="https://www.linkedin.com/in/victor-llivina-051166245" class="contact-item" target="_blank" rel="noopener">
                         <div class="contact-icon">in</div>
-                        <div class="contact-label">LinkedIn</div>
+                        <div class="contact-label" data-i18n="contact_linkedin">LinkedIn</div>
                         <div class="contact-value">/in/victor-llivina-051166245</div>
                     </a>
                 </div>
@@ -1230,33 +1233,33 @@
             <button class="modal-close" id="modalClose" aria-label="Close">X</button>
             <h3 class="modal-title" id="modalTitle"></h3>
             <p class="modal-subtitle" id="modalSubtitle"></p>
-            <div class="modal-section-title">Why I Built It</div>
+            <div class="modal-section-title" data-i18n="modal_why">Why I Built It</div>
             <p id="modalStory"></p>
-            <div class="modal-section-title">Core Functions</div>
+            <div class="modal-section-title" data-i18n="modal_functions">Core Functions</div>
             <div class="modal-list" id="modalList"></div>
             <div class="modal-actions">
-                <a class="project-secondary" id="modalDemo" href="#">Request Demo</a>
+                <a class="project-secondary" id="modalDemo" href="#" data-i18n="request_demo">Request Demo</a>
             </div>
         </div>
     </div>
 
     <!-- Game Score Display -->
     <div class="game-score-display" id="gameScore">
-        SCORE: <span id="score">0</span><br>
-        HIGH: <span id="highScore">0</span>
+        <span data-i18n="score_label">SCORE</span>: <span id="score">0</span><br>
+        <span data-i18n="high_label">HIGH</span>: <span id="highScore">0</span>
     </div>
 
     <!-- Game Instructions -->
     <div class="game-instructions" id="gameInstructions">
-        <p>Press Arrow Keys or WASD to Start!</p>
+        <p data-i18n="game_instructions">Press Arrow Keys or WASD to Start!</p>
     </div>
 
     <!-- Game Over Message -->
     <div class="game-over-message" id="gameOverMessage">
-        <h2>GAME OVER</h2>
-        <p>Final Score: <span id="finalScore">0</span></p>
-        <button class="restart-button" onclick="restartGame()">Play Again</button>
-        <button class="restart-button" id="closeGameFromOver">Close Game</button>
+        <h2 data-i18n="game_over">GAME OVER</h2>
+        <p><span data-i18n="final_score">Final Score</span>: <span id="finalScore">0</span></p>
+        <button class="restart-button" onclick="restartGame()" data-i18n="play_again">Play Again</button>
+        <button class="restart-button" id="closeGameFromOver" data-i18n="close_game">Close Game</button>
     </div>
 
     <script>
@@ -1317,13 +1320,13 @@
 
             // Update UI
             gameButton.classList.add('playing');
-            gameButton.textContent = 'Stop Game';
+            updateGameButtonLabel();
             scoreDisplay.classList.add('active');
             scoreElement.textContent = score;
             highScoreElement.textContent = highScore;
             gameOverMessage.classList.remove('active');
             gameInstructions.classList.add('active'); // Show instructions
-            gameInstructions.querySelector('p').textContent = 'Move with Arrow Keys or WASD. Space = Turbo.';
+            gameInstructions.querySelector('p').textContent = translations[currentLang].game_instructions_move;
 
             // Create snake segments
             createSnakeElements();
@@ -1339,7 +1342,7 @@
             gameRunning = false;
             clearInterval(gameLoop);
             gameButton.classList.remove('playing');
-            gameButton.textContent = 'Play Snake';
+            updateGameButtonLabel();
             scoreDisplay.classList.remove('active');
             gameInstructions.classList.remove('active');
             gameArenaSection.classList.remove('active');
@@ -1609,7 +1612,7 @@
                     foodElement = null;
                 }
                 gameButton.classList.remove('playing');
-                gameButton.textContent = 'Play Snake';
+                updateGameButtonLabel();
                 scoreDisplay.classList.remove('active');
             }, 100);
         }
@@ -1684,6 +1687,46 @@
             gameOverMessage.classList.remove('active');
         });
 
+        // Touch controls for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const touchThreshold = 30;
+
+        gameArena.addEventListener('touchstart', (e) => {
+            if (!gameRunning) return;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }, { passive: true });
+
+        gameArena.addEventListener('touchmove', (e) => {
+            if (!gameRunning) return;
+            const touch = e.touches[0];
+            const dx = touch.clientX - touchStartX;
+            const dy = touch.clientY - touchStartY;
+
+            if (Math.abs(dx) < touchThreshold && Math.abs(dy) < touchThreshold) {
+                return;
+            }
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dx > 0 && velocity.x === 0) {
+                    velocity = { x: gridSize, y: 0 };
+                } else if (dx < 0 && velocity.x === 0) {
+                    velocity = { x: -gridSize, y: 0 };
+                }
+            } else {
+                if (dy > 0 && velocity.y === 0) {
+                    velocity = { x: 0, y: gridSize };
+                } else if (dy < 0 && velocity.y === 0) {
+                    velocity = { x: 0, y: -gridSize };
+                }
+            }
+
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }, { passive: true });
+
         function scrollToSection(sectionId) {
             const section = document.getElementById(sectionId);
             const navHeight = document.querySelector('nav').offsetHeight;
@@ -1744,39 +1787,249 @@
             });
         });
 
+        const translations = {
+            en: {
+                nav_home: 'Home',
+                nav_skills: 'Skills',
+                nav_projects: 'Projects',
+                nav_contact: 'Contact',
+                hero_tag: '// Software Engineer • Cybersecurity • Product Builder',
+                hero_subtitle: 'Software Engineering at FIU • M.S. Cybersecurity at UEM • Project Manager at DC Cable',
+                hero_blurb: 'I build secure, user-focused systems that turn complex problems into simple workflows. My work blends engineering, cybersecurity, and product thinking to ship tools people actually enjoy using.',
+                badge_ethics: 'Ethical Hacking',
+                badge_forensics: 'Digital Forensics',
+                badge_dev: 'Software Development',
+                badge_ai: 'AI',
+                badge_uiux: 'UI/UX Design',
+                badge_pqc: 'Post-Quantic Cryptography',
+                badge_gamedev: 'Game Development',
+                cta_view_work: 'View My Work',
+                skills_tag: '// Expertise',
+                skills_title: 'Technical Skills',
+                skills_subtitle: 'A comprehensive toolkit for modern software development',
+                skills_languages: 'Languages',
+                skills_frontend: 'Frontend',
+                skills_backend: 'Backend',
+                skills_security: 'Security',
+                skills_devops: 'DevOps & Cloud',
+                skills_tools: 'Tools & Other',
+                projects_tag: '// Portfolio',
+                projects_title: 'Featured Projects',
+                projects_subtitle: 'A selection of my recent work and contributions',
+                proj_company_title: 'Company Website',
+                proj_company_desc: 'I created a corporate website for my company to increase the visibility and reach of our projects, while improving communication with potential business partners. The design focuses on a modern, clean, and minimalist aesthetic.',
+                proj_invoice_title: 'Invoice Generator App',
+                proj_invoice_desc: 'Created a clean, one-click invoicing flow that turned messy manual billing into branded PDFs, auto-numbered invoices, and a searchable client history.',
+                proj_finance_title: 'Company Financial Management System',
+                proj_finance_desc: 'Centralized cash flow, expenses, and approvals into one dashboard so leadership could forecast with confidence and close the month faster.',
+                proj_pqc_title: 'Interactive Presentation in Post-Quantic Cybersecurity',
+                proj_pqc_desc: 'Turned a dense topic into an interactive app with live demos, animations, and checkpoints that kept a non-technical audience engaged and informed.',
+                proj_isms_title: 'ISMS for Various Mock Companies',
+                proj_isms_desc: 'Designed ISMS frameworks and audit packs that helped mock organizations map risks, close gaps, and prove readiness for compliance reviews.',
+                proj_snake_title: 'Bored? Play Snake :)',
+                proj_snake_desc: 'A playful mini-game built into the site for quick breaks, fast reflexes, and a little nostalgia.',
+                role_full_dev: 'Role: Full Development',
+                role_auditor: 'Role: Auditor',
+                role_fun: 'Role: Fun Side Quest',
+                view_project: 'View Project →',
+                play_snake: 'Play Snake',
+                stop_game: 'Stop Game',
+                arena_tag: '// Snake Arena',
+                arena_title: 'Playfield',
+                arena_subtitle: 'Starts when you hit “Play Snake” in Projects',
+                arena_help: 'Controls: Arrow Keys / WASD to move, Space for turbo, any other key to exit turbo. On mobile: swipe to move.',
+                close_game: 'Close Game',
+                contact_tag: '// Get In Touch',
+                contact_title: "Let's Connect",
+                contact_subtitle: 'Open to new opportunities and collaborations',
+                contact_email: 'Email',
+                contact_phone: 'Phone',
+                contact_github: 'GitHub',
+                contact_linkedin: 'LinkedIn',
+                score_label: 'SCORE',
+                high_label: 'HIGH',
+                game_instructions: 'Press Arrow Keys or WASD to Start!',
+                game_instructions_move: 'Move with Arrow Keys or WASD. Space = Turbo.',
+                game_over: 'GAME OVER',
+                final_score: 'Final Score',
+                play_again: 'Play Again',
+                modal_why: 'Why I Built It',
+                modal_functions: 'Core Functions',
+                request_demo: 'Request Demo'
+            },
+            es: {
+                nav_home: 'Inicio',
+                nav_skills: 'Habilidades',
+                nav_projects: 'Proyectos',
+                nav_contact: 'Contacto',
+                hero_tag: '// Ingeniero de Software • Ciberseguridad • Product Builder',
+                hero_subtitle: 'Ingeniería de Software en FIU • Master en Ciberseguridad en UEM • Gerente de Proyectos en DC Cable',
+                hero_blurb: 'Construyo sistemas seguros y centrados en el usuario que convierten problemas complejos en flujos simples. Mi trabajo combina ingeniería, ciberseguridad y diseño de producto para crear herramientas que los usuarios disfruten usar.',
+                badge_ethics: 'Hacking Ético',
+                badge_forensics: 'Forense Digital',
+                badge_dev: 'Desarrollo de Software',
+                badge_ai: 'IA',
+                badge_uiux: 'Diseño UI/UX',
+                badge_pqc: 'Criptografía Post-Cuántica',
+                badge_gamedev: 'Desarrollo de Videojuegos',
+                cta_view_work: 'Ver Mi Trabajo',
+                skills_tag: '// Experiencia',
+                skills_title: 'Habilidades Técnicas',
+                skills_subtitle: 'Herramientas para el desarrollo moderno',
+                skills_languages: 'Lenguajes',
+                skills_frontend: 'Frontend',
+                skills_backend: 'Backend',
+                skills_security: 'Seguridad',
+                skills_devops: 'DevOps y Cloud',
+                skills_tools: 'Herramientas y Otros',
+                projects_tag: '// Portafolio',
+                projects_title: 'Proyectos Destacados',
+                projects_subtitle: 'Una selección de mi trabajo y contribuciones recientes',
+                proj_company_title: 'Sitio Web de la Empresa',
+                proj_company_desc: 'Creé un sitio web corporativo para mi empresa con el objetivo de aumentar la visibilidad y el alcance de nuestros proyectos, mejorando la comunicación con potenciales socios comerciales. El diseño se centró en una estética moderna y minimalista.',
+                proj_invoice_title: 'App Generadora de Facturas',
+                proj_invoice_desc: 'Diseñé un flujo de facturación con un clic que convirtió el proceso manual en PDFs de marca, facturas autonumeradas y un historial filtrable.',
+                proj_finance_title: 'Sistema de Gestión Financiera',
+                proj_finance_desc: 'Centralicé flujo de ganancias, gastos y aprobaciones en un solo sitio para que la jefatura pudiera pronosticar con confianza y cerrar el mes más rápido.',
+                proj_pqc_title: 'Presentación Interactiva en Ciberseguridad Post-Cuántica',
+                proj_pqc_desc: 'Convertí un tema denso en una aplicación interactiva con demos en vivo, animaciones y checkpoints para audiencias no técnicas.',
+                proj_isms_title: 'SGSI para Varias Empresas Simuladas',
+                proj_isms_desc: 'Diseñé marcos de SGSI y paquetes de auditoría que ayudaron a mapear riesgos, cerrar brechas y demostrar preparación para cumplimiento.',
+                proj_snake_title: '¿Aburrido? Juega Snake :)',
+                proj_snake_desc: 'Un mini‑juego integrado para descansos rápidos, reflejos ágiles y un toque de nostalgia.',
+                role_full_dev: 'Rol: Desarrollo completo',
+                role_auditor: 'Rol: Auditor',
+                role_fun: 'Rol: Proyecto divertido',
+                view_project: 'Ver Proyecto →',
+                play_snake: 'Jugar Snake',
+                stop_game: 'Detener juego',
+                arena_tag: '// Arena Snake',
+                arena_title: 'Campo de juego',
+                arena_subtitle: 'Inicia cuando presionas “Jugar Snake” en Proyectos',
+                arena_help: 'Controles: Flechas / WASD para mover, Espacio para turbo, cualquier otra tecla para salir del turbo. En móvil: desliza para mover.',
+                close_game: 'Cerrar juego',
+                contact_tag: '// Hablemos',
+                contact_title: 'Conectemos',
+                contact_subtitle: 'Abierto a nuevas oportunidades y colaboraciones',
+                contact_email: 'Correo',
+                contact_phone: 'Teléfono',
+                contact_github: 'GitHub',
+                contact_linkedin: 'LinkedIn',
+                score_label: 'PUNTOS',
+                high_label: 'RÉCORD',
+                game_instructions: '¡Presiona Flechas o WASD para comenzar!',
+                game_instructions_move: 'Mueve con Flechas o WASD. Espacio = Turbo.',
+                game_over: 'FIN DEL JUEGO',
+                final_score: 'Puntaje final',
+                play_again: 'Jugar de nuevo',
+                modal_why: 'Por qué lo construí',
+                modal_functions: 'Funciones clave',
+                request_demo: 'Solicitar demo'
+            }
+        };
+
+        let currentLang = 'en';
+        const langToggle = document.getElementById('langToggle');
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach((el) => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+            updateGameButtonLabel();
+            const instructionsEl = gameInstructions.querySelector('p');
+            if (!gameRunning) {
+                instructionsEl.textContent = translations[lang].game_instructions;
+            }
+            langToggle.textContent = lang === 'en' ? 'Español' : 'English';
+        }
+
+        function updateGameButtonLabel() {
+            if (gameRunning) {
+                gameButton.textContent = translations[currentLang].stop_game;
+            } else {
+                gameButton.textContent = translations[currentLang].play_snake;
+            }
+        }
+
+        langToggle.addEventListener('click', () => {
+            applyLanguage(currentLang === 'en' ? 'es' : 'en');
+        });
+
+        applyLanguage('en');
+
         // Project modal data + behavior
         const modalData = {
             invoice: {
-                title: 'Invoice Generator App',
-                subtitle: 'Internal ops tool built for speed, clarity, and clean audit trails.',
-                story: 'I built this after noticing how much time we lost to manual billing and follow-ups. Even though it was not requested, I wanted a single, repeatable workflow that anyone on the team could use without training.',
-                demoSubject: 'Demo Request - Invoice Generator',
-                functions: [
-                    'Create, modify, delete invoices',
-                    'Search by client, date range, status, amount',
-                    'Export to PDF and Excel',
-                    'Role-based access: admin and user',
-                    'Authentication and session controls',
-                    'File and folder organization for records',
-                    'Automated numbering and due-date rules',
-                    'Quick resend and activity history'
-                ]
+                en: {
+                    title: 'Invoice Generator App',
+                    subtitle: 'Internal ops tool built for speed, clarity, and clean audit trails.',
+                    story: 'I built this after noticing how much time we lost to manual billing and follow-ups. Even though it was not requested, I wanted a single, repeatable workflow that anyone on the team could use without training.',
+                    demoSubject: 'Demo Request - Invoice Generator',
+                    functions: [
+                        'Create, modify, delete invoices',
+                        'Search by client, date range, status, amount',
+                        'Export to PDF and Excel',
+                        'Role-based access: admin and user',
+                        'Authentication and session controls',
+                        'File and folder organization for records',
+                        'Automated numbering and due-date rules',
+                        'Quick resend and activity history'
+                    ]
+                },
+                es: {
+                    title: 'App Generadora de Facturas',
+                    subtitle: 'Herramienta interna para velocidad, claridad y trazabilidad.',
+                    story: 'La construí al notar cuánto tiempo se perdía en facturación manual y seguimiento. Aunque no fue solicitada, quería un flujo único y repetible que cualquier persona pudiera usar sin entrenamiento.',
+                    demoSubject: 'Solicitud de demo - Facturas',
+                    functions: [
+                        'Crear, editar y eliminar facturas',
+                        'Buscar por cliente, fechas, estado y monto',
+                        'Exportar a PDF y Excel',
+                        'Accesos por roles: admin y usuario',
+                        'Autenticación y control de sesiones',
+                        'Organización de archivos y carpetas',
+                        'Numeración automática y reglas de vencimiento',
+                        'Reenvío rápido e historial de actividad'
+                    ]
+                }
             },
             finance: {
-                title: 'Company Financial Management System',
-                subtitle: 'Unified finance dashboard for forecasting, approvals, and payroll.',
-                story: 'I built this to stop the chaos of scattered spreadsheets and late close-outs. The goal was to give leadership a single source of truth even though it was not a formal request.',
-                demoSubject: 'Demo Request - Financial Management System',
-                functions: [
-                    'Income and expense tracking',
-                    'Budget vs actual comparisons',
-                    'Invoice and payment status overview',
-                    'Approval workflows for spend',
-                    'Payroll scheduling and export',
-                    'Role-based access and audit logs',
-                    'Multi-department cost centers',
-                    'Monthly close checklist and reports'
-                ]
+                en: {
+                    title: 'Company Financial Management System',
+                    subtitle: 'Unified finance dashboard for forecasting, approvals, and payroll.',
+                    story: 'I built this to stop the chaos of scattered spreadsheets and late close-outs. The goal was to give leadership a single source of truth even though it was not a formal request.',
+                    demoSubject: 'Demo Request - Financial Management System',
+                    functions: [
+                        'Income and expense tracking',
+                        'Budget vs actual comparisons',
+                        'Invoice and payment status overview',
+                        'Approval workflows for spend',
+                        'Payroll scheduling and export',
+                        'Role-based access and audit logs',
+                        'Multi-department cost centers',
+                        'Monthly close checklist and reports'
+                    ]
+                },
+                es: {
+                    title: 'Sistema de Gestión Financiera',
+                    subtitle: 'Panel unificado para pronósticos, aprobaciones y nómina.',
+                    story: 'Lo construí para eliminar el caos de hojas de cálculo dispersas y cierres tardíos. El objetivo era dar a liderazgo una única fuente de verdad aunque no fuese una solicitud formal.',
+                    demoSubject: 'Solicitud de demo - Sistema Financiero',
+                    functions: [
+                        'Seguimiento de ingresos y gastos',
+                        'Comparativos de presupuesto vs real',
+                        'Estado de facturas y pagos',
+                        'Flujos de aprobación de gastos',
+                        'Programación y exportación de nómina',
+                        'Acceso por roles y bitácoras de auditoría',
+                        'Centros de costo por departamento',
+                        'Checklist de cierre mensual y reportes'
+                    ]
+                }
             }
         };
 
@@ -1789,7 +2042,7 @@
         const modalDemo = document.getElementById('modalDemo');
 
         function openModal(key) {
-            const data = modalData[key];
+            const data = modalData[key] ? modalData[key][currentLang] : null;
             if (!data) return;
             modalTitle.textContent = data.title;
             modalSubtitle.textContent = data.subtitle;
