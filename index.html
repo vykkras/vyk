@@ -77,6 +77,22 @@
             100% { transform: translate(50px, 50px); }
         }
 
+        /* Cyber snake background */
+        #bgSnake {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.55;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #bgSnake { display: none; }
+        }
+
         /* Navigation */
         nav {
             position: fixed;
@@ -1199,6 +1215,8 @@
     </style>
 </head>
 <body>
+    <canvas id="bgSnake" aria-hidden="true"></canvas>
+
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
@@ -2439,6 +2457,137 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
         });
+
+        // ── Cyber snake background ──
+        (() => {
+            const canvas = document.getElementById('bgSnake');
+            if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const ctx = canvas.getContext('2d');
+            const CELL = 50;      // matches the grid background
+            const STEP_MS = 170;  // pace of one grid step
+            const START_LEN = 10, MAX_LEN = 20;
+            let cols, rows;
+
+            const snake = [];
+            for (let i = 0; i < START_LEN; i++) snake.push({ x: START_LEN + 2 - i, y: 3 });
+            let prev = snake.map(s => ({ ...s }));
+            let dir = { x: 1, y: 0 };
+            let food = null;
+            let eatFlash = 0;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                cols = Math.max(6, Math.ceil(canvas.width / CELL));
+                rows = Math.max(6, Math.ceil(canvas.height / CELL));
+                snake.forEach(s => { s.x %= cols; s.y %= rows; });
+                prev.forEach(s => { s.x %= cols; s.y %= rows; });
+                if (food) { food.x %= cols; food.y %= rows; }
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            function spawnFood() {
+                food = {
+                    x: 1 + Math.floor(Math.random() * (cols - 2)),
+                    y: 1 + Math.floor(Math.random() * (rows - 2))
+                };
+            }
+            spawnFood();
+
+            const DIRS = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
+
+            function chooseDir() {
+                const head = snake[0];
+                const options = DIRS.filter(d => !(d.x === -dir.x && d.y === -dir.y));
+                if (food && Math.random() < 0.8) {
+                    let dx = food.x - head.x, dy = food.y - head.y;
+                    if (Math.abs(dx) > cols / 2) dx = -Math.sign(dx);
+                    if (Math.abs(dy) > rows / 2) dy = -Math.sign(dy);
+                    const toward = options.filter(d =>
+                        (d.x !== 0 && d.x === Math.sign(dx)) || (d.y !== 0 && d.y === Math.sign(dy)));
+                    if (toward.length) return toward[Math.floor(Math.random() * toward.length)];
+                }
+                if (Math.random() < 0.2) return options[Math.floor(Math.random() * options.length)];
+                return dir;
+            }
+
+            function step() {
+                dir = chooseDir();
+                prev = snake.map(s => ({ ...s }));
+                const head = {
+                    x: (snake[0].x + dir.x + cols) % cols,
+                    y: (snake[0].y + dir.y + rows) % rows
+                };
+                snake.unshift(head);
+                if (food && head.x === food.x && head.y === food.y) {
+                    eatFlash = performance.now();
+                    if (snake.length > MAX_LEN) snake.pop();
+                    spawnFood();
+                } else {
+                    snake.pop();
+                }
+            }
+
+            function segmentPos(i, t) {
+                const cur = snake[i];
+                const p = prev[i] || cur;
+                const dx = cur.x - p.x, dy = cur.y - p.y;
+                if (Math.abs(dx) > 1 || Math.abs(dy) > 1) return cur; // wrapped: snap
+                return { x: p.x + dx * t, y: p.y + dy * t };
+            }
+
+            function draw(t) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const now = performance.now();
+
+                if (food) {
+                    const pulse = 0.5 + 0.5 * Math.sin(now / 300);
+                    ctx.fillStyle = `rgba(124, 58, 237, ${0.3 + 0.35 * pulse})`;
+                    ctx.beginPath();
+                    ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, 5 + 2.5 * pulse, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                if (now - eatFlash < 400) {
+                    const k = (now - eatFlash) / 400;
+                    const h = segmentPos(0, t);
+                    ctx.strokeStyle = `rgba(0, 217, 255, ${0.5 * (1 - k)})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(h.x * CELL + CELL / 2, h.y * CELL + CELL / 2, 10 + 30 * k, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                const pad = 14, size = CELL - pad * 2;
+                for (let i = snake.length - 1; i >= 0; i--) {
+                    const pos = segmentPos(i, t);
+                    const px = pos.x * CELL + pad, py = pos.y * CELL + pad;
+                    const alpha = i === 0 ? 0.65 : 0.45 * (1 - i / snake.length) + 0.06;
+                    ctx.fillStyle = `rgba(0, 217, 255, ${alpha})`;
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(px, py, size, size, 6);
+                    else ctx.rect(px, py, size, size);
+                    ctx.fill();
+                    if (i === 0) {
+                        ctx.shadowColor = 'rgba(0, 217, 255, 0.8)';
+                        ctx.shadowBlur = 12;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+
+            let last = performance.now(), acc = 0;
+            function loop(now) {
+                acc = Math.min(acc + (now - last), STEP_MS * 3);
+                last = now;
+                while (acc >= STEP_MS) { step(); acc -= STEP_MS; }
+                draw(acc / STEP_MS);
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
+        })();
 
     </script>
 </body>
