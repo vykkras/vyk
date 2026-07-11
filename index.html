@@ -243,7 +243,7 @@
             line-height: 1.1;
             font-family: 'Akony', 'JetBrains Mono', monospace;
             font-style: italic;
-            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            background: linear-gradient(135deg, var(--text-primary), #8fe07a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -251,24 +251,16 @@
         }
 
         .hero-title.electric {
-            text-shadow: 0 0 6px rgba(74, 246, 38, 0.25);
-            animation: fadeInUp 0.8s ease-out 0.4s both, electricFlicker 1.6s steps(2, end) infinite;
+            text-shadow: 0 0 14px rgba(74, 246, 38, 0.16);
+            animation: fadeInUp 0.8s ease-out 0.4s both, glowBreathe 6s ease-in-out infinite;
         }
 
-        @keyframes electricFlicker {
+        @keyframes glowBreathe {
             0%, 100% {
-                text-shadow:
-                    0 0 4px rgba(74, 246, 38, 0.25),
-                    0 0 10px rgba(74, 246, 38, 0.2),
-                    0 0 18px rgba(255, 176, 0, 0.15);
-                filter: none;
+                text-shadow: 0 0 10px rgba(74, 246, 38, 0.12);
             }
             50% {
-                text-shadow:
-                    0 0 2px rgba(74, 246, 38, 0.4),
-                    0 0 12px rgba(74, 246, 38, 0.45),
-                    0 0 22px rgba(255, 176, 0, 0.25);
-                filter: brightness(1.05) contrast(1.1);
+                text-shadow: 0 0 24px rgba(74, 246, 38, 0.26);
             }
         }
 
@@ -1239,7 +1231,7 @@
             <div class="hero-content">
                 <div class="hero-tag" data-i18n="hero_tag">// Software Engineer • Cybersecurity • Product Builder</div>
                 <h1 class="hero-title electric">Victor Llivina</h1>
-                <p class="hero-subtitle" data-i18n="hero_subtitle">Software Engineering at FIU • M.S. Cybersecurity at UEM • Project Manager at DC Cable</p>
+                <p class="hero-subtitle" data-i18n="hero_subtitle">Software Engineering at FIU • M.S. Cybersecurity at UEM</p>
                 <div class="hero-badges">
                     <span class="hero-badge" data-i18n="badge_ethics">Ethical Hacking</span>
                     <span class="hero-badge" data-i18n="badge_forensics">Digital Forensics</span>
@@ -2156,7 +2148,7 @@
                 nav_projects: 'Projects',
                 nav_contact: 'Contact',
                 hero_tag: '// Software Engineer • Cybersecurity • Product Builder',
-                hero_subtitle: 'Software Engineering at FIU • M.S. Cybersecurity at UEM • Project Manager at DC Cable',
+                hero_subtitle: 'Software Engineering at FIU • M.S. Cybersecurity at UEM',
                 hero_blurb: 'I build secure, user-focused systems that turn complex problems into simple workflows. My work blends engineering, cybersecurity, and product thinking to ship tools people actually enjoy using.',
                 badge_ethics: 'Ethical Hacking',
                 badge_forensics: 'Digital Forensics',
@@ -2226,7 +2218,7 @@
                 nav_projects: 'Proyectos',
                 nav_contact: 'Contacto',
                 hero_tag: '// Ingeniero de Software • Ciberseguridad • Product Builder',
-                hero_subtitle: 'Ingeniería de Software en FIU • Master en Ciberseguridad en UEM • Gerente de Proyectos en DC Cable',
+                hero_subtitle: 'Ingeniería de Software en FIU • Master en Ciberseguridad en UEM',
                 hero_blurb: 'Construyo sistemas seguros y centrados en el usuario que convierten problemas complejos en flujos simples. Mi trabajo combina ingeniería, ciberseguridad y diseño de producto para crear herramientas que los usuarios disfruten usar.',
                 badge_ethics: 'Hacking Ético',
                 badge_forensics: 'Forense Digital',
