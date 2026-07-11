@@ -92,6 +92,56 @@
 
         @media (prefers-reduced-motion: reduce) {
             #bgSnake { display: none; }
+            .bg-toggle { display: none; }
+        }
+
+        /* Pac's speech bubble — sits above page content on purpose */
+        .pac-quip {
+            position: fixed;
+            z-index: 1200;
+            transform: translate(-50%, -100%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            background: rgba(11, 15, 11, 0.92);
+            border: 1px solid rgba(74, 246, 38, 0.6);
+            border-radius: 8px;
+            padding: 0.35rem 0.7rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .pac-quip.show { opacity: 1; }
+
+        /* Background animations pause/play */
+        .bg-toggle {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            z-index: 1001;
+            width: 2.4rem;
+            height: 2.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--accent-primary);
+            background: rgba(11, 15, 11, 0.85);
+            border: 1px solid rgba(74, 246, 38, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .bg-toggle:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 12px rgba(74, 246, 38, 0.25);
+        }
+
+        body.bg-paused::before {
+            animation-play-state: paused;
         }
 
         /* Navigation */
@@ -1181,6 +1231,7 @@
 </head>
 <body>
     <canvas id="bgSnake" aria-hidden="true"></canvas>
+    <button class="bg-toggle" id="bgToggle" aria-pressed="false" aria-label="Pause or resume background animations" title="Pause / resume background">⏸</button>
 
     <!-- Navigation -->
     <nav>
@@ -2446,6 +2497,41 @@
                 ctx.fill();
             }
 
+            // Pac's speech bubble (DOM, so it stays readable above page content)
+            const QUIPS = {
+                en: [
+                    "We can't keep meeting like this.",
+                    "You're not even the scary one.",
+                    "Personal space, buddy.",
+                    "I'm just here for the dots.",
+                    "Tell Blinky I said hi.",
+                    "You okay back there?"
+                ],
+                es: [
+                    "No podemos seguir viéndonos así.",
+                    "Ni siquiera eres el que da miedo.",
+                    "Espacio personal, amigo.",
+                    "Solo vengo por los puntos.",
+                    "Saluda a Blinky de mi parte.",
+                    "¿Todo bien ahí atrás?"
+                ]
+            };
+            const quipEl = document.createElement('div');
+            quipEl.className = 'pac-quip';
+            document.body.appendChild(quipEl);
+
+            function showQuip(x, y) {
+                const lang = (typeof currentLang !== 'undefined' && QUIPS[currentLang]) ? currentLang : 'en';
+                const list = QUIPS[lang];
+                quipEl.textContent = list[Math.floor(Math.random() * list.length)];
+                quipEl.style.left = Math.round(x) + 'px';
+                quipEl.style.top = Math.round(y) + 'px';
+                quipEl.classList.add('show');
+            }
+            function hideQuip() {
+                quipEl.classList.remove('show');
+            }
+
             // — snake: wanders the grid chasing amber packets —
             function snakeScene() {
                 const START_LEN = 10, MAX_LEN = 20;
@@ -2650,9 +2736,9 @@
                 return { stepMs: 220, step, draw };
             }
 
-            // — pac: chomps a dot row while an amber ghost tails it —
+            // — pac: chomps a dot row while an amber ghost tails him; sometimes has words —
             function pacScene() {
-                let row, dir, pac, ghost, dots, pause;
+                let row, dir, pac, ghost, dots, pause, quipTicks, quipped;
 
                 function newRun() {
                     row = 1 + Math.floor(Math.random() * Math.max(1, rows - 2));
@@ -2662,6 +2748,8 @@
                     dots = [];
                     for (let x = 1; x < cols - 1; x++) dots.push(x);
                     pause = 0;
+                    quipTicks = 0;
+                    quipped = false;
                 }
                 newRun();
 
@@ -2671,9 +2759,20 @@
                         if (pause === 0) newRun();
                         return;
                     }
+                    if (quipTicks > 0) {
+                        quipTicks--;
+                        if (Math.abs(pac - ghost) > 3.2) ghost += dir * 0.082; // ghost pulls up, politely
+                        if (quipTicks === 0) hideQuip();
+                        return;
+                    }
                     pac += dir * 0.09;
                     ghost += dir * 0.082;
                     dots = dots.filter(x => (dir > 0 ? x > pac : x < pac));
+                    if (!quipped && pac > 5 && pac < cols - 6 && Math.abs(pac - ghost) > 4 && Math.random() < 0.006) {
+                        quipped = true;
+                        quipTicks = 70;
+                        showQuip(pac * CELL + CELL / 2, row * CELL - 6);
+                    }
                     const ghostOut = dir > 0 ? ghost > cols + 2 : ghost < -3;
                     if (ghostOut) pause = 50;
                 }
@@ -2689,7 +2788,9 @@
                     });
                     const px = pac * CELL + CELL / 2;
                     const mouth = 0.18 + 0.17 * Math.abs(Math.sin(performance.now() / 130));
-                    const base = dir > 0 ? 0 : Math.PI;
+                    // while quipping, pac turns to face the ghost
+                    const facing = quipTicks > 0 ? -dir : dir;
+                    const base = facing > 0 ? 0 : Math.PI;
                     ctx.fillStyle = `rgba(${GREEN}, 0.55)`;
                     ctx.beginPath();
                     ctx.moveTo(px, cy);
@@ -2714,10 +2815,10 @@
                     ctx.arc(gx + 6, cy - 4, 3, 0, Math.PI * 2);
                     ctx.fill();
                 }
-                return { stepMs: 40, step, draw };
+                return { stepMs: 40, step, draw, cleanup: hideQuip };
             }
 
-            // — scene manager: rotate at random with crossfades —
+            // — scene manager: rotate at random with crossfades, pausable —
             const makers = [snakeScene, tetrisScene, pacScene];
             const FADE = 1500;
             let sceneIdx = FIRST_SCENE;
@@ -2727,15 +2828,19 @@
 
             window.addEventListener('resize', () => {
                 resize();
+                if (scene.cleanup) scene.cleanup();
                 scene = makers[sceneIdx]();
             });
 
             let last = performance.now(), acc = 0;
+            let rafId = 0, running = true, pausedAt = 0;
+
             function loop(now) {
                 acc = Math.min(acc + (now - last), scene.stepMs * 3);
                 last = now;
                 let age = now - sceneStart;
                 if (age > sceneLife) {
+                    if (scene.cleanup) scene.cleanup();
                     sceneIdx = (sceneIdx + 1 + Math.floor(Math.random() * (makers.length - 1))) % makers.length;
                     scene = makers[sceneIdx]();
                     sceneStart = now;
@@ -2749,9 +2854,38 @@
                 ctx.globalAlpha = Math.max(0, Math.min(1, age / FADE, (sceneLife - age) / FADE));
                 scene.draw(Math.min(acc / scene.stepMs, 1));
                 ctx.globalAlpha = 1;
-                requestAnimationFrame(loop);
+                rafId = requestAnimationFrame(loop);
             }
-            requestAnimationFrame(loop);
+
+            const toggleBtn = document.getElementById('bgToggle');
+
+            function setRunning(on) {
+                running = on;
+                document.body.classList.toggle('bg-paused', !on);
+                if (toggleBtn) {
+                    toggleBtn.textContent = on ? '⏸' : '▶';
+                    toggleBtn.setAttribute('aria-pressed', String(!on));
+                }
+                try { localStorage.setItem('bgArcade', on ? 'on' : 'off'); } catch (e) {}
+                if (!on) {
+                    cancelAnimationFrame(rafId);
+                    pausedAt = performance.now();
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    if (scene.cleanup) scene.cleanup();
+                } else {
+                    sceneStart += performance.now() - pausedAt;
+                    last = performance.now();
+                    acc = 0;
+                    rafId = requestAnimationFrame(loop);
+                }
+            }
+
+            if (toggleBtn) toggleBtn.addEventListener('click', () => setRunning(!running));
+
+            let stored = null;
+            try { stored = localStorage.getItem('bgArcade'); } catch (e) {}
+            if (stored === 'off') setRunning(false);
+            else rafId = requestAnimationFrame(loop);
         })();
 
     </script>
