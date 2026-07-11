@@ -115,29 +115,38 @@
 
         .pac-quip.show { opacity: 1; }
 
-        /* Background animations pause/play */
-        .bg-toggle {
-            position: fixed;
-            bottom: 1.2rem;
-            right: 1.2rem;
-            z-index: 1001;
-            width: 2.4rem;
-            height: 2.4rem;
+        /* Background animations stop/play (next to the logo) */
+        .nav-brand {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            color: var(--accent-primary);
-            background: rgba(11, 15, 11, 0.85);
-            border: 1px solid rgba(74, 246, 38, 0.4);
-            border-radius: 8px;
+        }
+
+        .bg-toggle {
+            margin-left: 1rem;
+            padding: 0.3rem 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            background: transparent;
+            border: 1px solid rgba(74, 246, 38, 0.35);
+            border-radius: 6px;
             cursor: pointer;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap;
+            transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .bg-toggle:hover {
+            color: var(--accent-primary);
             border-color: var(--accent-primary);
             box-shadow: 0 0 12px rgba(74, 246, 38, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            .bg-toggle {
+                margin-left: 0.6rem;
+                padding: 0.25rem 0.5rem;
+                font-size: 0.6rem;
+            }
         }
 
         body.bg-paused::before {
@@ -1231,12 +1240,14 @@
 </head>
 <body>
     <canvas id="bgSnake" aria-hidden="true"></canvas>
-    <button class="bg-toggle" id="bgToggle" aria-pressed="false" aria-label="Pause or resume background animations" title="Pause / resume background">⏸</button>
 
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <div class="logo">&lt;/VYK&gt;</div>
+            <div class="nav-brand">
+                <div class="logo">&lt;/VYK&gt;</div>
+                <button class="bg-toggle" id="bgToggle" data-i18n="bg_stop" aria-pressed="false">Stop animations</button>
+            </div>
             <button class="nav-toggle" id="navToggle" aria-label="Open menu">☰</button>
             <div class="nav-links">
                 <button class="nav-btn" onclick="scrollToSection('home')" data-i18n="nav_home">Home</button>
@@ -2178,6 +2189,8 @@
                 badge_pqc: 'Post-Quantum Cryptography',
                 badge_gamedev: 'Game Development',
                 cta_view_work: 'View My Work',
+                bg_stop: 'Stop animations',
+                bg_play: 'Play animations',
                 skills_tag: '// Expertise',
                 skills_title: 'Technical Skills',
                 skills_subtitle: 'A comprehensive toolkit for modern software development',
@@ -2248,6 +2261,8 @@
                 badge_pqc: 'Criptografía Post-Cuántica',
                 badge_gamedev: 'Desarrollo de Videojuegos',
                 cta_view_work: 'Ver Mi Trabajo',
+                bg_stop: 'Detener animaciones',
+                bg_play: 'Reanudar animaciones',
                 skills_tag: '// Experiencia',
                 skills_title: 'Habilidades Técnicas',
                 skills_subtitle: 'Herramientas para el desarrollo moderno',
@@ -2863,7 +2878,11 @@
                 running = on;
                 document.body.classList.toggle('bg-paused', !on);
                 if (toggleBtn) {
-                    toggleBtn.textContent = on ? '⏸' : '▶';
+                    const key = on ? 'bg_stop' : 'bg_play';
+                    toggleBtn.setAttribute('data-i18n', key);
+                    let label = on ? 'Stop animations' : 'Play animations';
+                    try { label = translations[currentLang][key] || label; } catch (e) {}
+                    toggleBtn.textContent = label;
                     toggleBtn.setAttribute('aria-pressed', String(!on));
                 }
                 try { localStorage.setItem('bgArcade', on ? 'on' : 'off'); } catch (e) {}
