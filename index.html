@@ -2420,132 +2420,335 @@
             if (e.key === 'Escape') closeModal();
         });
 
-        // ── Cyber snake background ──
+        // ── Ambient arcade background: snake / tetris / pac rotate at random ──
         (() => {
             const canvas = document.getElementById('bgSnake');
             if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             const ctx = canvas.getContext('2d');
             const CELL = 50;      // matches the grid background
-            const STEP_MS = 170;  // pace of one grid step
-            const START_LEN = 10, MAX_LEN = 20;
-            let cols, rows;
-
-            const snake = [];
-            for (let i = 0; i < START_LEN; i++) snake.push({ x: START_LEN + 2 - i, y: 3 });
-            let prev = snake.map(s => ({ ...s }));
-            let dir = { x: 1, y: 0 };
-            let food = null;
-            let eatFlash = 0;
+            const GREEN = '74, 246, 38';
+            const AMBER = '255, 176, 0';
+            const FIRST_SCENE = 0;
+            let cols = 6, rows = 6;
 
             function resize() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
                 cols = Math.max(6, Math.ceil(canvas.width / CELL));
                 rows = Math.max(6, Math.ceil(canvas.height / CELL));
-                snake.forEach(s => { s.x %= cols; s.y %= rows; });
-                prev.forEach(s => { s.x %= cols; s.y %= rows; });
-                if (food) { food.x %= cols; food.y %= rows; }
             }
             resize();
-            window.addEventListener('resize', resize);
 
-            function spawnFood() {
-                food = {
-                    x: 1 + Math.floor(Math.random() * (cols - 2)),
-                    y: 1 + Math.floor(Math.random() * (rows - 2))
-                };
-            }
-            spawnFood();
-
-            const DIRS = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
-
-            function chooseDir() {
-                const head = snake[0];
-                const options = DIRS.filter(d => !(d.x === -dir.x && d.y === -dir.y));
-                if (food && Math.random() < 0.8) {
-                    let dx = food.x - head.x, dy = food.y - head.y;
-                    if (Math.abs(dx) > cols / 2) dx = -Math.sign(dx);
-                    if (Math.abs(dy) > rows / 2) dy = -Math.sign(dy);
-                    const toward = options.filter(d =>
-                        (d.x !== 0 && d.x === Math.sign(dx)) || (d.y !== 0 && d.y === Math.sign(dy)));
-                    if (toward.length) return toward[Math.floor(Math.random() * toward.length)];
-                }
-                if (Math.random() < 0.2) return options[Math.floor(Math.random() * options.length)];
-                return dir;
+            function fillRounded(px, py, size, radius) {
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(px, py, size, size, radius);
+                else ctx.rect(px, py, size, size);
+                ctx.fill();
             }
 
-            function step() {
-                dir = chooseDir();
-                prev = snake.map(s => ({ ...s }));
-                const head = {
-                    x: (snake[0].x + dir.x + cols) % cols,
-                    y: (snake[0].y + dir.y + rows) % rows
-                };
-                snake.unshift(head);
-                if (food && head.x === food.x && head.y === food.y) {
-                    eatFlash = performance.now();
-                    if (snake.length > MAX_LEN) snake.pop();
-                    spawnFood();
-                } else {
-                    snake.pop();
+            // — snake: wanders the grid chasing amber packets —
+            function snakeScene() {
+                const START_LEN = 10, MAX_LEN = 20;
+                const DIRS = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
+                const snake = [];
+                for (let i = 0; i < START_LEN; i++) snake.push({ x: START_LEN + 2 - i, y: 3 });
+                let prev = snake.map(s => ({ ...s }));
+                let dir = { x: 1, y: 0 };
+                let food = null;
+                let eatFlash = 0;
+
+                function spawnFood() {
+                    food = {
+                        x: 1 + Math.floor(Math.random() * (cols - 2)),
+                        y: 1 + Math.floor(Math.random() * (rows - 2))
+                    };
                 }
-            }
+                spawnFood();
 
-            function segmentPos(i, t) {
-                const cur = snake[i];
-                const p = prev[i] || cur;
-                const dx = cur.x - p.x, dy = cur.y - p.y;
-                if (Math.abs(dx) > 1 || Math.abs(dy) > 1) return cur; // wrapped: snap
-                return { x: p.x + dx * t, y: p.y + dy * t };
-            }
-
-            function draw(t) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                const now = performance.now();
-
-                if (food) {
-                    const pulse = 0.5 + 0.5 * Math.sin(now / 300);
-                    ctx.fillStyle = `rgba(255, 176, 0, ${0.3 + 0.35 * pulse})`;
-                    ctx.beginPath();
-                    ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, 5 + 2.5 * pulse, 0, Math.PI * 2);
-                    ctx.fill();
+                function chooseDir() {
+                    const head = snake[0];
+                    const options = DIRS.filter(d => !(d.x === -dir.x && d.y === -dir.y));
+                    if (food && Math.random() < 0.8) {
+                        let dx = food.x - head.x, dy = food.y - head.y;
+                        if (Math.abs(dx) > cols / 2) dx = -Math.sign(dx);
+                        if (Math.abs(dy) > rows / 2) dy = -Math.sign(dy);
+                        const toward = options.filter(d =>
+                            (d.x !== 0 && d.x === Math.sign(dx)) || (d.y !== 0 && d.y === Math.sign(dy)));
+                        if (toward.length) return toward[Math.floor(Math.random() * toward.length)];
+                    }
+                    if (Math.random() < 0.2) return options[Math.floor(Math.random() * options.length)];
+                    return dir;
                 }
 
-                if (now - eatFlash < 400) {
-                    const k = (now - eatFlash) / 400;
-                    const h = segmentPos(0, t);
-                    ctx.strokeStyle = `rgba(74, 246, 38, ${0.5 * (1 - k)})`;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.arc(h.x * CELL + CELL / 2, h.y * CELL + CELL / 2, 10 + 30 * k, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-
-                const pad = 14, size = CELL - pad * 2;
-                for (let i = snake.length - 1; i >= 0; i--) {
-                    const pos = segmentPos(i, t);
-                    const px = pos.x * CELL + pad, py = pos.y * CELL + pad;
-                    const alpha = i === 0 ? 0.65 : 0.45 * (1 - i / snake.length) + 0.06;
-                    ctx.fillStyle = `rgba(74, 246, 38, ${alpha})`;
-                    ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(px, py, size, size, 6);
-                    else ctx.rect(px, py, size, size);
-                    ctx.fill();
-                    if (i === 0) {
-                        ctx.shadowColor = 'rgba(74, 246, 38, 0.8)';
-                        ctx.shadowBlur = 12;
-                        ctx.fill();
-                        ctx.shadowBlur = 0;
+                function step() {
+                    dir = chooseDir();
+                    prev = snake.map(s => ({ ...s }));
+                    const head = {
+                        x: (snake[0].x + dir.x + cols) % cols,
+                        y: (snake[0].y + dir.y + rows) % rows
+                    };
+                    snake.unshift(head);
+                    if (food && head.x === food.x && head.y === food.y) {
+                        eatFlash = performance.now();
+                        if (snake.length > MAX_LEN) snake.pop();
+                        spawnFood();
+                    } else {
+                        snake.pop();
                     }
                 }
+
+                function segmentPos(i, t) {
+                    const cur = snake[i];
+                    const p = prev[i] || cur;
+                    const dx = cur.x - p.x, dy = cur.y - p.y;
+                    if (Math.abs(dx) > 1 || Math.abs(dy) > 1) return cur; // wrapped: snap
+                    return { x: p.x + dx * t, y: p.y + dy * t };
+                }
+
+                function draw(t) {
+                    const now = performance.now();
+                    if (food) {
+                        const pulse = 0.5 + 0.5 * Math.sin(now / 300);
+                        ctx.fillStyle = `rgba(${AMBER}, ${0.3 + 0.35 * pulse})`;
+                        ctx.beginPath();
+                        ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, 5 + 2.5 * pulse, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    if (now - eatFlash < 400) {
+                        const k = (now - eatFlash) / 400;
+                        const h = segmentPos(0, t);
+                        ctx.strokeStyle = `rgba(${GREEN}, ${0.5 * (1 - k)})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(h.x * CELL + CELL / 2, h.y * CELL + CELL / 2, 10 + 30 * k, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                    const pad = 14, size = CELL - pad * 2;
+                    for (let i = snake.length - 1; i >= 0; i--) {
+                        const pos = segmentPos(i, t);
+                        const px = pos.x * CELL + pad, py = pos.y * CELL + pad;
+                        const alpha = i === 0 ? 0.65 : 0.45 * (1 - i / snake.length) + 0.06;
+                        ctx.fillStyle = `rgba(${GREEN}, ${alpha})`;
+                        fillRounded(px, py, size, 6);
+                        if (i === 0) {
+                            ctx.shadowColor = `rgba(${GREEN}, 0.8)`;
+                            ctx.shadowBlur = 12;
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
+                    }
+                }
+                return { stepMs: 170, step, draw };
             }
+
+            // — tetris: pieces drift down and settle; full or too-tall rows flash out —
+            function tetrisScene() {
+                const SHAPES = [
+                    [[0, 0], [1, 0], [2, 0], [3, 0]],
+                    [[0, 0], [1, 0], [0, 1], [1, 1]],
+                    [[0, 0], [1, 0], [2, 0], [1, 1]],
+                    [[1, 0], [2, 0], [0, 1], [1, 1]],
+                    [[0, 0], [1, 0], [1, 1], [2, 1]],
+                    [[0, 0], [0, 1], [1, 1], [2, 1]],
+                    [[2, 0], [0, 1], [1, 1], [2, 1]]
+                ];
+                let settled = new Map();
+                let piece = null, flashRow = -1, flashTicks = 0;
+
+                function rotate(cells) {
+                    const r = cells.map(([x, y]) => [y, -x]);
+                    const minX = Math.min(...r.map(c => c[0]));
+                    const minY = Math.min(...r.map(c => c[1]));
+                    return r.map(([x, y]) => [x - minX, y - minY]);
+                }
+
+                function spawn() {
+                    let cells = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+                    const turns = Math.floor(Math.random() * 4);
+                    for (let i = 0; i < turns; i++) cells = rotate(cells);
+                    const w = Math.max(...cells.map(c => c[0])) + 1;
+                    piece = { cells, x: Math.floor(Math.random() * Math.max(1, cols - w)), y: -2, py: -3 };
+                }
+                spawn();
+
+                function hits(px, py) {
+                    return piece.cells.some(([cx, cy]) => {
+                        const x = px + cx, y = py + cy;
+                        return x < 0 || x >= cols || y >= rows || settled.has(x + ',' + y);
+                    });
+                }
+
+                function stackHeight() {
+                    let top = rows;
+                    for (const k of settled.keys()) {
+                        const y = Number(k.split(',')[1]);
+                        if (y < top) top = y;
+                    }
+                    return rows - top;
+                }
+
+                function step() {
+                    if (flashTicks > 0) {
+                        flashTicks--;
+                        if (flashTicks === 0) {
+                            const next = new Map();
+                            for (const k of settled.keys()) {
+                                const [x, y] = k.split(',').map(Number);
+                                if (y === flashRow) continue;
+                                next.set(x + ',' + (y < flashRow ? y + 1 : y), true);
+                            }
+                            settled = next;
+                            flashRow = -1;
+                        }
+                        return;
+                    }
+                    if (!piece) { spawn(); return; }
+                    piece.py = piece.y;
+                    if (Math.random() < 0.25) {
+                        const dx = Math.random() < 0.5 ? -1 : 1;
+                        if (!hits(piece.x + dx, piece.y)) piece.x += dx;
+                    }
+                    if (!hits(piece.x, piece.y + 1)) {
+                        piece.y++;
+                        return;
+                    }
+                    piece.cells.forEach(([cx, cy]) => {
+                        if (piece.y + cy >= 0) settled.set((piece.x + cx) + ',' + (piece.y + cy), true);
+                    });
+                    piece = null;
+                    for (let y = rows - 1; y >= 0; y--) {
+                        let full = true;
+                        for (let x = 0; x < cols; x++) {
+                            if (!settled.has(x + ',' + y)) { full = false; break; }
+                        }
+                        if (full) { flashRow = y; flashTicks = 3; return; }
+                    }
+                    if (stackHeight() >= 7) { flashRow = rows - 1; flashTicks = 3; }
+                }
+
+                function draw(t) {
+                    ctx.fillStyle = `rgba(${GREEN}, 0.14)`;
+                    for (const k of settled.keys()) {
+                        const [x, y] = k.split(',').map(Number);
+                        if (y === flashRow) continue;
+                        fillRounded(x * CELL + 10, y * CELL + 10, CELL - 20, 4);
+                    }
+                    if (flashRow >= 0) {
+                        ctx.fillStyle = `rgba(${AMBER}, 0.4)`;
+                        for (let x = 0; x < cols; x++) {
+                            if (settled.has(x + ',' + flashRow)) fillRounded(x * CELL + 10, flashRow * CELL + 10, CELL - 20, 4);
+                        }
+                    }
+                    if (piece) {
+                        const y = piece.py + (piece.y - piece.py) * t;
+                        ctx.fillStyle = `rgba(${GREEN}, 0.45)`;
+                        piece.cells.forEach(([cx, cy]) => {
+                            fillRounded((piece.x + cx) * CELL + 10, (y + cy) * CELL + 10, CELL - 20, 4);
+                        });
+                    }
+                }
+                return { stepMs: 220, step, draw };
+            }
+
+            // — pac: chomps a dot row while an amber ghost tails it —
+            function pacScene() {
+                let row, dir, pac, ghost, dots, pause;
+
+                function newRun() {
+                    row = 1 + Math.floor(Math.random() * Math.max(1, rows - 2));
+                    dir = Math.random() < 0.5 ? 1 : -1;
+                    pac = dir > 0 ? -2 : cols + 1;
+                    ghost = pac - dir * 5;
+                    dots = [];
+                    for (let x = 1; x < cols - 1; x++) dots.push(x);
+                    pause = 0;
+                }
+                newRun();
+
+                function step() {
+                    if (pause > 0) {
+                        pause--;
+                        if (pause === 0) newRun();
+                        return;
+                    }
+                    pac += dir * 0.09;
+                    ghost += dir * 0.082;
+                    dots = dots.filter(x => (dir > 0 ? x > pac : x < pac));
+                    const ghostOut = dir > 0 ? ghost > cols + 2 : ghost < -3;
+                    if (ghostOut) pause = 50;
+                }
+
+                function draw() {
+                    if (pause > 0) return;
+                    const cy = row * CELL + CELL / 2;
+                    ctx.fillStyle = `rgba(${GREEN}, 0.3)`;
+                    dots.forEach(x => {
+                        ctx.beginPath();
+                        ctx.arc(x * CELL + CELL / 2, cy, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                    const px = pac * CELL + CELL / 2;
+                    const mouth = 0.18 + 0.17 * Math.abs(Math.sin(performance.now() / 130));
+                    const base = dir > 0 ? 0 : Math.PI;
+                    ctx.fillStyle = `rgba(${GREEN}, 0.55)`;
+                    ctx.beginPath();
+                    ctx.moveTo(px, cy);
+                    ctx.arc(px, cy, 17, base + mouth * Math.PI, base - mouth * Math.PI);
+                    ctx.closePath();
+                    ctx.fill();
+                    const gx = ghost * CELL + CELL / 2;
+                    ctx.fillStyle = `rgba(${AMBER}, 0.4)`;
+                    ctx.beginPath();
+                    ctx.arc(gx, cy - 2, 15, Math.PI, 0);
+                    ctx.lineTo(gx + 15, cy + 10);
+                    ctx.lineTo(gx + 9, cy + 14);
+                    ctx.lineTo(gx + 3, cy + 10);
+                    ctx.lineTo(gx - 3, cy + 14);
+                    ctx.lineTo(gx - 9, cy + 10);
+                    ctx.lineTo(gx - 15, cy + 14);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.fillStyle = 'rgba(11, 15, 11, 0.9)';
+                    ctx.beginPath();
+                    ctx.arc(gx - 6, cy - 4, 3, 0, Math.PI * 2);
+                    ctx.arc(gx + 6, cy - 4, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                return { stepMs: 40, step, draw };
+            }
+
+            // — scene manager: rotate at random with crossfades —
+            const makers = [snakeScene, tetrisScene, pacScene];
+            const FADE = 1500;
+            let sceneIdx = FIRST_SCENE;
+            let scene = makers[sceneIdx]();
+            let sceneStart = performance.now();
+            let sceneLife = 45000 + Math.random() * 20000;
+
+            window.addEventListener('resize', () => {
+                resize();
+                scene = makers[sceneIdx]();
+            });
 
             let last = performance.now(), acc = 0;
             function loop(now) {
-                acc = Math.min(acc + (now - last), STEP_MS * 3);
+                acc = Math.min(acc + (now - last), scene.stepMs * 3);
                 last = now;
-                while (acc >= STEP_MS) { step(); acc -= STEP_MS; }
-                draw(acc / STEP_MS);
+                let age = now - sceneStart;
+                if (age > sceneLife) {
+                    sceneIdx = (sceneIdx + 1 + Math.floor(Math.random() * (makers.length - 1))) % makers.length;
+                    scene = makers[sceneIdx]();
+                    sceneStart = now;
+                    sceneLife = 45000 + Math.random() * 20000;
+                    age = 0;
+                    acc = 0;
+                } else {
+                    while (acc >= scene.stepMs) { scene.step(); acc -= scene.stepMs; }
+                }
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.globalAlpha = Math.max(0, Math.min(1, age / FADE, (sceneLife - age) / FADE));
+                scene.draw(Math.min(acc / scene.stepMs, 1));
+                ctx.globalAlpha = 1;
                 requestAnimationFrame(loop);
             }
             requestAnimationFrame(loop);
