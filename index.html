@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Victor Llivina — Software Engineer & Cybersecurity</title>
-    <meta name="description" content="Victor Llivina — software engineer and cybersecurity specialist. Software Engineering at FIU, M.S. Cybersecurity at UEM. I build secure, user-focused systems that turn complex problems into simple workflows.">
+    <meta name="description" content="Victor Llivina — software engineering at FIU, M.S. cybersecurity at UEM, project manager at DC Cable. I build the software the company actually runs on.">
     <meta property="og:title" content="Victor Llivina — Software Engineer & Cybersecurity">
-    <meta property="og:description" content="I build secure, user-focused systems that turn complex problems into simple workflows.">
+    <meta property="og:description" content="Software engineering at FIU, M.S. cybersecurity at UEM. I build the software DC Cable actually runs on.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://vyk.studio/">
     <link rel="canonical" href="https://vyk.studio/">
@@ -243,33 +243,12 @@
             line-height: 1.1;
             font-family: 'Akony', 'Sora', sans-serif;
             font-style: italic;
-            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--text-primary);
             animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
         .hero-title.electric {
-            text-shadow: 0 0 6px rgba(0, 217, 255, 0.25);
-            animation: fadeInUp 0.8s ease-out 0.4s both, electricFlicker 1.6s steps(2, end) infinite;
-        }
-
-        @keyframes electricFlicker {
-            0%, 100% {
-                text-shadow:
-                    0 0 4px rgba(0, 217, 255, 0.25),
-                    0 0 10px rgba(0, 217, 255, 0.2),
-                    0 0 18px rgba(124, 58, 237, 0.15);
-                filter: none;
-            }
-            50% {
-                text-shadow:
-                    0 0 2px rgba(0, 217, 255, 0.4),
-                    0 0 12px rgba(0, 217, 255, 0.45),
-                    0 0 22px rgba(124, 58, 237, 0.25);
-                filter: brightness(1.05) contrast(1.1);
-            }
+            text-shadow: 0 0 24px rgba(0, 217, 255, 0.25);
         }
 
         .hero-subtitle {
@@ -1237,21 +1216,17 @@
     <section id="home">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-tag" data-i18n="hero_tag">// Software Engineer • Cybersecurity • Product Builder</div>
+                <div class="hero-tag" data-i18n="hero_tag">// hi, I'm</div>
                 <h1 class="hero-title electric">Victor Llivina</h1>
                 <p class="hero-subtitle" data-i18n="hero_subtitle">Software Engineering at FIU • M.S. Cybersecurity at UEM • Project Manager at DC Cable</p>
                 <div class="hero-badges">
-                    <span class="hero-badge" data-i18n="badge_ethics">Ethical Hacking</span>
-                    <span class="hero-badge" data-i18n="badge_forensics">Digital Forensics</span>
                     <span class="hero-badge" data-i18n="badge_dev">Software Development</span>
-                    <span class="hero-badge" data-i18n="badge_ai">AI</span>
-                    <span class="hero-badge" data-i18n="badge_uiux">UI/UX Design</span>
                     <span class="hero-badge" data-i18n="badge_pqc">Post-Quantum Cryptography</span>
-                    <span class="hero-badge" data-i18n="badge_gamedev">Game Development</span>
+                    <span class="hero-badge" data-i18n="badge_uiux">UI/UX Design</span>
                 </div>
-                <p class="hero-interests" data-i18n="hero_blurb">I build secure, user-focused systems that turn complex problems into simple workflows. My work blends engineering, cybersecurity, and product thinking to ship tools people actually enjoy using.</p>
+                <p class="hero-interests" data-i18n="hero_blurb">By day I manage projects at DC Cable — and I build the software the company actually runs on: the website, the invoicing, the finances. Meanwhile I'm finishing a software engineering degree at FIU and a master's in cybersecurity at UEM, where post-quantum cryptography became the rabbit hole I still haven't climbed out of.</p>
                 <button class="cta-button" onclick="scrollToSection('projects')">
-                    <span data-i18n="cta_view_work">View My Work</span>
+                    <span data-i18n="cta_view_work">See the work</span>
                 </button>
             </div>
             <div class="scroll-indicator">
@@ -1266,7 +1241,7 @@
             <div class="section-header">
                 <div class="section-tag" data-i18n="skills_tag">// Expertise</div>
                 <h2 class="section-title" data-i18n="skills_title">Technical Skills</h2>
-                <p class="section-subtitle" data-i18n="skills_subtitle">A comprehensive toolkit for modern software development</p>
+                <p class="section-subtitle" data-i18n="skills_subtitle">What I reach for, roughly in order of comfort</p>
             </div>
             <div class="skills-grid">
                 <div class="skill-category">
@@ -1333,12 +1308,10 @@
                     <div class="skill-icon">~</div>
                     <h3 class="skill-title" data-i18n="skills_tools">Tools & Other</h3>
                     <div class="skill-list">
-                        <span class="skill-tag">AI</span>
                         <span class="skill-tag">Linux</span>
                         <span class="skill-tag">Wireshark</span>
                         <span class="skill-tag">Burp Suite</span>
                         <span class="skill-tag">Metasploit</span>
-                        <span class="skill-tag">VS Code</span>
                         <span class="skill-tag">Figma</span>
                     </div>
                 </div>
@@ -1352,7 +1325,7 @@
             <div class="section-header">
                 <div class="section-tag" data-i18n="projects_tag">// Portfolio</div>
                 <h2 class="section-title" data-i18n="projects_title">Featured Projects</h2>
-                <p class="section-subtitle" data-i18n="projects_subtitle">A selection of my recent work and contributions</p>
+                <p class="section-subtitle" data-i18n="projects_subtitle">Half of these run a real company back office; the rest I built to learn something</p>
             </div>
             <div class="projects-grid">
                 <div class="project-card" data-href="https://www.dccablellc.com/">
@@ -1362,14 +1335,12 @@
                     </div>
                     <div class="project-content">
                         <h3 class="project-title" data-i18n="proj_company_title">Company Website</h3>
-                        <p class="project-role" data-i18n="role_full_dev">Role: Full Development</p>
-                        <p class="project-description" data-i18n="proj_company_desc">I created a corporate website for my company to increase the visibility and reach of our projects, while improving communication with potential business partners. The design focuses on a modern, clean, and minimalist aesthetic.</p>
+                        <p class="project-role" data-i18n="role_full_dev">Designed and built solo</p>
+                        <p class="project-description" data-i18n="proj_company_desc">The public face of DC Cable. I built it so potential partners could see our finished projects and reach us without a phone call. Clean, fast, nothing clever.</p>
                         <div class="project-tech">
                             <span class="tech-badge">React</span>
                             <span class="tech-badge">Resend</span>
-                            <span class="tech-badge">Vite</span>
-                            <span class="tech-badge">Accessibility</span>
-                        </div>
+                            <span class="tech-badge">Vite</span>                        </div>
                         <a href="https://www.dccablellc.com/" class="project-link" target="_blank" rel="noopener" data-i18n="view_project">View Project →</a>
                     </div>
                 </div>
@@ -1379,8 +1350,8 @@
                     </div>
                     <div class="project-content">
                         <h3 class="project-title" data-i18n="proj_invoice_title">Invoice Generator App</h3>
-                        <p class="project-role" data-i18n="role_full_dev">Role: Full Development</p>
-                        <p class="project-description" data-i18n="proj_invoice_desc">Created a clean, one-click invoicing flow that turned messy manual billing into branded PDFs, auto-numbered invoices, and a searchable client history.</p>
+                        <p class="project-role" data-i18n="role_full_dev">Designed and built solo</p>
+                        <p class="project-description" data-i18n="proj_invoice_desc">Billing at DC Cable was a manual mess, so I replaced it — nobody asked me to, honestly. One click now makes a branded, auto-numbered PDF and logs it to the client record.</p>
                         <div class="project-tech">
                             <span class="tech-badge">React</span>
                             <span class="tech-badge">Supabase</span>
@@ -1388,9 +1359,7 @@
                             <span class="tech-badge">Supabase Storage</span>
                             <span class="tech-badge">Vite</span>
                             <span class="tech-badge">PDF Export</span>
-                            <span class="tech-badge">Email Templates</span>
-                            <span class="tech-badge">Accessibility</span>
-                        </div>
+                            <span class="tech-badge">Email Templates</span>                        </div>
                         <div class="project-actions">
                             <button class="project-link" data-modal="invoice" data-i18n="view_project">View Project →</button>
                         </div>
@@ -1402,8 +1371,8 @@
                     </div>
                     <div class="project-content">
                         <h3 class="project-title" data-i18n="proj_finance_title">Company Financial Management System</h3>
-                        <p class="project-role" data-i18n="role_full_dev">Role: Full Development</p>
-                        <p class="project-description" data-i18n="proj_finance_desc">Centralized cash flow, expenses, and approvals into one dashboard so leadership could forecast with confidence and close the month faster.</p>
+                        <p class="project-role" data-i18n="role_full_dev">Designed and built solo</p>
+                        <p class="project-description" data-i18n="proj_finance_desc">One dashboard for cash flow, expenses, and approvals. Closing the month used to be an archaeology project; now the numbers are just there.</p>
                         <div class="project-tech">
                             <span class="tech-badge">React</span>
                             <span class="tech-badge">Supabase</span>
@@ -1411,9 +1380,7 @@
                             <span class="tech-badge">Supabase Storage</span>
                             <span class="tech-badge">Vite</span>
                             <span class="tech-badge">PostgreSQL</span>
-                            <span class="tech-badge">Charts</span>
-                            <span class="tech-badge">Accessibility</span>
-                        </div>
+                            <span class="tech-badge">Charts</span>                        </div>
                         <div class="project-actions">
                             <button class="project-link" data-modal="finance" data-i18n="view_project">View Project →</button>
                         </div>
@@ -1426,15 +1393,13 @@
                     </div>
                     <div class="project-content">
                         <h3 class="project-title" data-i18n="proj_pqc_title">Interactive Presentation in Post-Quantum Cybersecurity</h3>
-                        <p class="project-role" data-i18n="role_full_dev">Role: Full Development</p>
-                        <p class="project-description" data-i18n="proj_pqc_desc">Turned a dense topic into an interactive story with live demos, animations, and checkpoints that kept a non-technical audience engaged and informed.</p>
+                        <p class="project-role" data-i18n="role_full_dev">Designed and built solo</p>
+                        <p class="project-description" data-i18n="proj_pqc_desc">Slides alone were never going to explain post-quantum crypto to a non-technical room, so I built the talk as a small web app instead — live demos, animations, and checkpoints to make sure nobody got lost.</p>
                         <div class="project-tech">
                             <span class="tech-badge">HTML</span>
                             <span class="tech-badge">CSS</span>
                             <span class="tech-badge">JavaScript</span>
-                            <span class="tech-badge">CSS Animations</span>
-                            <span class="tech-badge">Accessibility</span>
-                        </div>
+                            <span class="tech-badge">CSS Animations</span>                        </div>
                         <a href="https://critografia-sxyi.vercel.app/" class="project-link" target="_blank" rel="noopener" data-i18n="view_project">View Project →</a>
                     </div>
                 </div>
@@ -1442,25 +1407,23 @@
                     <div class="project-image"></div>
                     <div class="project-content">
                         <h3 class="project-title" data-i18n="proj_isms_title">ISMS for Various Mock Companies</h3>
-                        <p class="project-role" data-i18n="role_auditor">Role: Auditor</p>
-                        <p class="project-description" data-i18n="proj_isms_desc">Designed ISMS frameworks and audit packs that helped mock organizations map risks, close gaps, and prove readiness for compliance reviews.</p>
+                        <p class="project-role" data-i18n="role_auditor">Auditor</p>
+                        <p class="project-description" data-i18n="proj_isms_desc">Full ISMS packs for mock companies — risk register, policy suite, gap analysis — the same paperwork a real ISO 27001 audit would demand. Tedious, and weirdly satisfying.</p>
                         <div class="project-tech">
                             <span class="tech-badge">PILAR</span>
                             <span class="tech-badge">DORA</span>
                             <span class="tech-badge">Risk Register</span>
                             <span class="tech-badge">Policy Suite</span>
                             <span class="tech-badge">ISO 27001</span>
-                            <span class="tech-badge">Asset Inventory</span>
-                            <span class="tech-badge">Accessibility</span>
-                        </div>
+                            <span class="tech-badge">Asset Inventory</span>                        </div>
                     </div>
                 </div>
                 <div class="project-card">
                     <div class="project-image"></div>
                     <div class="project-content">
                         <h3 class="project-title" data-i18n="proj_snake_title">Bored? Play Snake</h3>
-                        <p class="project-role" data-i18n="role_fun">Role: Fun Side Quest</p>
-                        <p class="project-description" data-i18n="proj_snake_desc">A playful mini-game built into the site for quick breaks, fast reflexes, and a little nostalgia.</p>
+                        <p class="project-role" data-i18n="role_fun">Side quest</p>
+                        <p class="project-description" data-i18n="proj_snake_desc">Snake, in the browser. Zero business value. Arrow keys or WASD; spacebar for turbo.</p>
                         <div class="project-actions">
                             <button class="game-button in-project" id="gameButton" title="Play CyberSnake" data-i18n="play_snake">Play Snake</button>
                         </div>
@@ -1490,9 +1453,9 @@
         <div class="container">
             <div class="contact-content">
                 <div class="section-header">
-                    <div class="section-tag" data-i18n="contact_tag">// Get In Touch</div>
-                    <h2 class="section-title" data-i18n="contact_title">Let's Connect</h2>
-                    <p class="section-subtitle" data-i18n="contact_subtitle">Open to new opportunities and collaborations</p>
+                    <div class="section-tag" data-i18n="contact_tag">// Contact</div>
+                    <h2 class="section-title" data-i18n="contact_title">Say hello</h2>
+                    <p class="section-subtitle" data-i18n="contact_subtitle">The inbox is open — for work, security talk, or bragging about your Snake high score</p>
                 </div>
                 <div class="contact-grid">
                     <a href="mailto:vmkrasovsky@yahoo.com" class="contact-item">
@@ -2155,20 +2118,16 @@
                 nav_skills: 'Skills',
                 nav_projects: 'Projects',
                 nav_contact: 'Contact',
-                hero_tag: '// Software Engineer • Cybersecurity • Product Builder',
+                hero_tag: "// hi, I'm",
                 hero_subtitle: 'Software Engineering at FIU • M.S. Cybersecurity at UEM • Project Manager at DC Cable',
-                hero_blurb: 'I build secure, user-focused systems that turn complex problems into simple workflows. My work blends engineering, cybersecurity, and product thinking to ship tools people actually enjoy using.',
-                badge_ethics: 'Ethical Hacking',
-                badge_forensics: 'Digital Forensics',
+                hero_blurb: "By day I manage projects at DC Cable — and I build the software the company actually runs on: the website, the invoicing, the finances. Meanwhile I'm finishing a software engineering degree at FIU and a master's in cybersecurity at UEM, where post-quantum cryptography became the rabbit hole I still haven't climbed out of.",
                 badge_dev: 'Software Development',
-                badge_ai: 'AI',
                 badge_uiux: 'UI/UX Design',
                 badge_pqc: 'Post-Quantum Cryptography',
-                badge_gamedev: 'Game Development',
-                cta_view_work: 'View My Work',
+                cta_view_work: 'See the work',
                 skills_tag: '// Expertise',
                 skills_title: 'Technical Skills',
-                skills_subtitle: 'A comprehensive toolkit for modern software development',
+                skills_subtitle: 'What I reach for, roughly in order of comfort',
                 skills_languages: 'Languages',
                 skills_frontend: 'Frontend',
                 skills_backend: 'Backend',
@@ -2177,22 +2136,22 @@
                 skills_tools: 'Tools & Other',
                 projects_tag: '// Portfolio',
                 projects_title: 'Featured Projects',
-                projects_subtitle: 'A selection of my recent work and contributions',
+                projects_subtitle: 'Half of these run a real company back office; the rest I built to learn something',
                 proj_company_title: 'Company Website',
-                proj_company_desc: 'I created a corporate website for my company to increase the visibility and reach of our projects, while improving communication with potential business partners. The design focuses on a modern, clean, and minimalist aesthetic.',
+                proj_company_desc: 'The public face of DC Cable. I built it so potential partners could see our finished projects and reach us without a phone call. Clean, fast, nothing clever.',
                 proj_invoice_title: 'Invoice Generator App',
-                proj_invoice_desc: 'Created a clean, one-click invoicing flow that turned messy manual billing into branded PDFs, auto-numbered invoices, and a searchable client history.',
+                proj_invoice_desc: 'Billing at DC Cable was a manual mess, so I replaced it — nobody asked me to, honestly. One click now makes a branded, auto-numbered PDF and logs it to the client record.',
                 proj_finance_title: 'Company Financial Management System',
-                proj_finance_desc: 'Centralized cash flow, expenses, and approvals into one dashboard so leadership could forecast with confidence and close the month faster.',
+                proj_finance_desc: 'One dashboard for cash flow, expenses, and approvals. Closing the month used to be an archaeology project; now the numbers are just there.',
                 proj_pqc_title: 'Interactive Presentation in Post-Quantum Cybersecurity',
-                proj_pqc_desc: 'Turned a dense topic into an interactive app with live demos, animations, and checkpoints that kept a non-technical audience engaged and informed.',
+                proj_pqc_desc: 'Slides alone were never going to explain post-quantum crypto to a non-technical room, so I built the talk as a small web app instead — live demos, animations, and checkpoints to make sure nobody got lost.',
                 proj_isms_title: 'ISMS for Various Mock Companies',
-                proj_isms_desc: 'Designed ISMS frameworks and audit packs that helped mock organizations map risks, close gaps, and prove readiness for compliance reviews.',
+                proj_isms_desc: 'Full ISMS packs for mock companies — risk register, policy suite, gap analysis — the same paperwork a real ISO 27001 audit would demand. Tedious, and weirdly satisfying.',
                 proj_snake_title: 'Bored? Play Snake :)',
-                proj_snake_desc: 'A playful mini-game built into the site for quick breaks, fast reflexes, and a little nostalgia.',
-                role_full_dev: 'Role: Full Development',
-                role_auditor: 'Role: Auditor',
-                role_fun: 'Role: Fun Side Quest',
+                proj_snake_desc: 'Snake, in the browser. Zero business value. Arrow keys or WASD; spacebar for turbo.',
+                role_full_dev: 'Designed and built solo',
+                role_auditor: 'Auditor',
+                role_fun: 'Side quest',
                 view_project: 'View Project →',
                 play_snake: 'Play Snake',
                 stop_game: 'Stop Game',
@@ -2201,9 +2160,9 @@
                 arena_subtitle: 'Starts when you hit “Play Snake” in Projects',
                 arena_help: 'Controls: Arrow Keys / WASD to move, Space for turbo, any other key to exit turbo. On mobile: swipe to move.',
                 close_game: 'Close Game',
-                contact_tag: '// Get In Touch',
-                contact_title: "Let's Connect",
-                contact_subtitle: 'Open to new opportunities and collaborations',
+                contact_tag: '// Contact',
+                contact_title: "Say hello",
+                contact_subtitle: 'The inbox is open — for work, security talk, or bragging about your Snake high score',
                 contact_email: 'Email',
                 contact_phone: 'Phone',
                 contact_github: 'GitHub',
@@ -2225,20 +2184,16 @@
                 nav_skills: 'Habilidades',
                 nav_projects: 'Proyectos',
                 nav_contact: 'Contacto',
-                hero_tag: '// Ingeniero de Software • Ciberseguridad • Product Builder',
+                hero_tag: '// hola, soy',
                 hero_subtitle: 'Ingeniería de Software en FIU • Master en Ciberseguridad en UEM • Gerente de Proyectos en DC Cable',
-                hero_blurb: 'Construyo sistemas seguros y centrados en el usuario que convierten problemas complejos en flujos simples. Mi trabajo combina ingeniería, ciberseguridad y diseño de producto para crear herramientas que los usuarios disfruten usar.',
-                badge_ethics: 'Hacking Ético',
-                badge_forensics: 'Forense Digital',
+                hero_blurb: 'De día gestiono proyectos en DC Cable — y construyo el software con el que realmente funciona la empresa: la web, la facturación, las finanzas. Mientras tanto termino Ingeniería de Software en FIU y un máster en ciberseguridad en la UEM, donde la criptografía post-cuántica se convirtió en una madriguera de la que todavía no he salido.',
                 badge_dev: 'Desarrollo de Software',
-                badge_ai: 'IA',
                 badge_uiux: 'Diseño UI/UX',
                 badge_pqc: 'Criptografía Post-Cuántica',
-                badge_gamedev: 'Desarrollo de Videojuegos',
-                cta_view_work: 'Ver Mi Trabajo',
+                cta_view_work: 'Ver el trabajo',
                 skills_tag: '// Experiencia',
                 skills_title: 'Habilidades Técnicas',
-                skills_subtitle: 'Herramientas para el desarrollo moderno',
+                skills_subtitle: 'Lo que uso, más o menos en orden de soltura',
                 skills_languages: 'Lenguajes',
                 skills_frontend: 'Frontend',
                 skills_backend: 'Backend',
@@ -2247,22 +2202,22 @@
                 skills_tools: 'Herramientas y Otros',
                 projects_tag: '// Portafolio',
                 projects_title: 'Proyectos Destacados',
-                projects_subtitle: 'Una selección de mi trabajo y contribuciones recientes',
+                projects_subtitle: 'La mitad de estos hacen funcionar la oficina de una empresa real; el resto los construí para aprender algo',
                 proj_company_title: 'Sitio Web de la Empresa',
-                proj_company_desc: 'Creé un sitio web corporativo para mi empresa con el objetivo de aumentar la visibilidad y el alcance de nuestros proyectos, mejorando la comunicación con potenciales socios comerciales. El diseño se centró en una estética moderna y minimalista.',
+                proj_company_desc: 'La cara pública de DC Cable. Lo construí para que socios potenciales pudieran ver nuestros proyectos terminados y contactarnos sin una llamada. Limpio, rápido, nada rebuscado.',
                 proj_invoice_title: 'App Generadora de Facturas',
-                proj_invoice_desc: 'Diseñé un flujo de facturación con un clic que convirtió el proceso manual en PDFs de marca, facturas autonumeradas y un historial filtrable.',
+                proj_invoice_desc: 'La facturación en DC Cable era un desastre manual, así que la reemplacé — nadie me lo pidió, la verdad. Ahora un clic genera un PDF autonumerado con la marca y lo guarda en la ficha del cliente.',
                 proj_finance_title: 'Sistema de Gestión Financiera',
-                proj_finance_desc: 'Centralicé flujo de ganancias, gastos y aprobaciones en un solo sitio para que la jefatura pudiera pronosticar con confianza y cerrar el mes más rápido.',
+                proj_finance_desc: 'Un solo panel para flujo de caja, gastos y aprobaciones. Cerrar el mes era trabajo de arqueología; ahora los números simplemente están ahí.',
                 proj_pqc_title: 'Presentación Interactiva en Ciberseguridad Post-Cuántica',
-                proj_pqc_desc: 'Convertí un tema denso en una aplicación interactiva con demos en vivo, animaciones y checkpoints para audiencias no técnicas.',
+                proj_pqc_desc: 'Unas diapositivas nunca iban a explicar la criptografía post-cuántica a una sala no técnica, así que convertí la charla en una pequeña app web — demos en vivo, animaciones y checkpoints para que nadie se perdiera.',
                 proj_isms_title: 'SGSI para Varias Empresas Simuladas',
-                proj_isms_desc: 'Diseñé marcos de SGSI y paquetes de auditoría que ayudaron a mapear riesgos, cerrar brechas y demostrar preparación para cumplimiento.',
+                proj_isms_desc: 'Paquetes completos de SGSI para empresas simuladas — registro de riesgos, políticas, análisis de brechas — el mismo papeleo que exigiría una auditoría ISO 27001 real. Tedioso, y extrañamente satisfactorio.',
                 proj_snake_title: '¿Aburrido? Juega Snake :)',
-                proj_snake_desc: 'Un mini‑juego integrado para descansos rápidos, reflejos ágiles y un toque de nostalgia.',
-                role_full_dev: 'Rol: Desarrollo completo',
-                role_auditor: 'Rol: Auditor',
-                role_fun: 'Rol: Proyecto divertido',
+                proj_snake_desc: 'Snake, en el navegador. Cero valor de negocio. Flechas o WASD; espacio para el turbo.',
+                role_full_dev: 'Diseñado y construido en solitario',
+                role_auditor: 'Auditor',
+                role_fun: 'Misión secundaria',
                 view_project: 'Ver Proyecto →',
                 play_snake: 'Jugar Snake',
                 stop_game: 'Detener juego',
@@ -2271,9 +2226,9 @@
                 arena_subtitle: 'Inicia cuando presionas “Jugar Snake” en Proyectos',
                 arena_help: 'Controles: Flechas / WASD para mover, Espacio para turbo, cualquier otra tecla para salir del turbo. En móvil: desliza para mover.',
                 close_game: 'Cerrar juego',
-                contact_tag: '// Hablemos',
-                contact_title: 'Conectemos',
-                contact_subtitle: 'Abierto a nuevas oportunidades y colaboraciones',
+                contact_tag: '// Contacto',
+                contact_title: 'Hablemos',
+                contact_subtitle: 'La bandeja de entrada está abierta — para trabajo, charla de seguridad o presumir de tu récord en Snake',
                 contact_email: 'Correo',
                 contact_phone: 'Teléfono',
                 contact_github: 'GitHub',
