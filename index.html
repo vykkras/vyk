@@ -724,34 +724,6 @@
         }
 
         /* Scroll indicator */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-        }
-
-        .scroll-arrow {
-            width: 24px;
-            height: 24px;
-            border-left: 2px solid var(--accent-primary);
-            border-bottom: 2px solid var(--accent-primary);
-            transform: rotate(-45deg);
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             nav {
@@ -1245,9 +1217,6 @@
                 <button class="cta-button" onclick="scrollToSection('projects')">
                     <span data-i18n="cta_view_work">View My Work</span>
                 </button>
-            </div>
-            <div class="scroll-indicator">
-                <div class="scroll-arrow"></div>
             </div>
         </div>
     </section>
