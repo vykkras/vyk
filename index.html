@@ -1910,10 +1910,10 @@
                     <p class="section-subtitle" data-i18n="contact_subtitle">Open to new opportunities and collaborations</p>
                 </div>
                 <div class="contact-grid">
-                    <a href="mailto:vmkrasovsky@yahoo.com" class="contact-item">
+                    <a href="#" class="contact-item" data-email>
                         <div class="contact-icon">@</div>
                         <div class="contact-label" data-i18n="contact_email">Email</div>
-                        <div class="contact-value">vmkrasovsky@yahoo.com</div>
+                        <div class="contact-value" data-i18n="email_cta">Write me →</div>
                     </a>
                     <a href="https://github.com/vykkras" class="contact-item" target="_blank" rel="noopener">
                         <div class="contact-icon">&lt;/&gt;</div>
@@ -1938,7 +1938,7 @@
                 <p class="footer-tagline" data-i18n="footer_tagline">Building secure, human-friendly software from Miami to Madrid.</p>
             </div>
             <div class="footer-links">
-                <a href="mailto:vmkrasovsky@yahoo.com" data-i18n="contact_email">Email</a>
+                <a href="#" data-email data-i18n="contact_email">Email</a>
                 <a href="https://github.com/vykkras" target="_blank" rel="noopener">GitHub</a>
                 <a href="https://www.linkedin.com/in/victor-llivina-051166245" target="_blank" rel="noopener">LinkedIn</a>
             </div>
@@ -3056,6 +3056,12 @@
 
         renderCardHighs();
 
+        // Assembled at runtime so the address never appears in the static HTML
+        const emailAddr = ['vmkrasovsky', 'yahoo.com'].join('@');
+        document.querySelectorAll('a[data-email]').forEach((a) => {
+            a.setAttribute('href', 'mailto:' + emailAddr);
+        });
+
         function scrollToSection(sectionId) {
             const section = document.getElementById(sectionId);
             const navHeight = document.querySelector('nav').offsetHeight;
@@ -3152,6 +3158,7 @@
                 contact_title: "Let's Connect",
                 contact_subtitle: 'Open to new opportunities and collaborations',
                 contact_email: 'Email',
+                email_cta: 'Write me →',
                 contact_phone: 'Phone',
                 contact_github: 'GitHub',
                 contact_linkedin: 'LinkedIn',
@@ -3228,6 +3235,7 @@
                 contact_title: 'Conectemos',
                 contact_subtitle: 'Abierto a nuevas oportunidades y colaboraciones',
                 contact_email: 'Correo',
+                email_cta: 'Escríbeme →',
                 contact_phone: 'Teléfono',
                 contact_github: 'GitHub',
                 contact_linkedin: 'LinkedIn',
@@ -3397,7 +3405,7 @@
             modalSubtitle.textContent = data.subtitle;
             modalStory.textContent = data.story;
             modalList.innerHTML = data.functions.map((item) => `<span>${item}</span>`).join('');
-            modalDemo.href = `mailto:vmkrasovsky@yahoo.com?subject=${encodeURIComponent(data.demoSubject)}`;
+            modalDemo.href = `mailto:${emailAddr}?subject=${encodeURIComponent(data.demoSubject)}`;
             projectModal.classList.add('active');
             projectModal.setAttribute('aria-hidden', 'false');
         }
