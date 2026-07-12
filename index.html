@@ -3456,6 +3456,18 @@
             }
             resize();
 
+            // Pointer plumbing — scenes may trail the mouse or react to clicks
+            const mouse = { x: -1, y: -1, movedAt: 0 };
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+                mouse.movedAt = performance.now();
+            }, { passive: true });
+
+            function mouseActive() {
+                return mouse.movedAt && performance.now() - mouse.movedAt < 4000;
+            }
+
             function fillRounded(px, py, size, radius) {
                 ctx.beginPath();
                 if (ctx.roundRect) ctx.roundRect(px, py, size, size, radius);
@@ -3520,13 +3532,20 @@
                 function chooseDir() {
                     const head = snake[0];
                     const options = DIRS.filter(d => !(d.x === -dir.x && d.y === -dir.y));
-                    if (food && Math.random() < 0.8) {
-                        let dx = food.x - head.x, dy = food.y - head.y;
-                        if (Math.abs(dx) > cols / 2) dx = -Math.sign(dx);
-                        if (Math.abs(dy) > rows / 2) dy = -Math.sign(dy);
-                        const toward = options.filter(d =>
-                            (d.x !== 0 && d.x === Math.sign(dx)) || (d.y !== 0 && d.y === Math.sign(dy)));
-                        if (toward.length) return toward[Math.floor(Math.random() * toward.length)];
+                    // the mouse outranks food; an idle mouse hands control back
+                    const chasing = mouseActive();
+                    const target = chasing
+                        ? { x: Math.floor(mouse.x / CELL), y: Math.floor(mouse.y / CELL) }
+                        : food;
+                    if (target && Math.random() < (chasing ? 0.95 : 0.8)) {
+                        let dx = target.x - head.x, dy = target.y - head.y;
+                        if (dx !== 0 || dy !== 0) {
+                            if (Math.abs(dx) > cols / 2) dx = -Math.sign(dx);
+                            if (Math.abs(dy) > rows / 2) dy = -Math.sign(dy);
+                            const toward = options.filter(d =>
+                                (d.x !== 0 && d.x === Math.sign(dx)) || (d.y !== 0 && d.y === Math.sign(dy)));
+                            if (toward.length) return toward[Math.floor(Math.random() * toward.length)];
+                        }
                     }
                     if (Math.random() < 0.2) return options[Math.floor(Math.random() * options.length)];
                     return dir;
@@ -3605,7 +3624,7 @@
                     [[2, 0], [0, 1], [1, 1], [2, 1]]
                 ];
                 let settled = new Map();
-                let piece = null, flashRow = -1, flashTicks = 0;
+                let piece = null, flashRow = -1, flashTicks = 0, spunAt = 0;
 
                 function rotate(cells) {
                     const r = cells.map(([x, y]) => [y, -x]);
@@ -3656,7 +3675,13 @@
                     }
                     if (!piece) { spawn(); return; }
                     piece.py = piece.y;
-                    if (Math.random() < 0.25) {
+                    if (mouseActive()) {
+                        // shuffle toward the cursor's column
+                        const w = Math.max(...piece.cells.map(c => c[0])) + 1;
+                        const want = Math.round(mouse.x / CELL - w / 2);
+                        const dx = Math.sign(want - piece.x);
+                        if (dx && !hits(piece.x + dx, piece.y)) piece.x += dx;
+                    } else if (Math.random() < 0.25) {
                         const dx = Math.random() < 0.5 ? -1 : 1;
                         if (!hits(piece.x + dx, piece.y)) piece.x += dx;
                     }
@@ -3693,13 +3718,28 @@
                     }
                     if (piece) {
                         const y = piece.py + (piece.y - piece.py) * t;
-                        ctx.fillStyle = `rgba(${BLUE}, 0.45)`;
+                        const glow = Math.max(0, 1 - (performance.now() - spunAt) / 350);
+                        ctx.fillStyle = `rgba(${BLUE}, ${0.45 + 0.4 * glow})`;
                         piece.cells.forEach(([cx, cy]) => {
                             fillRounded((piece.x + cx) * CELL + 10, (y + cy) * CELL + 10, CELL - 20, 4);
                         });
                     }
                 }
-                return { stepMs: 220, step, draw };
+
+                function click() {
+                    // spin the falling piece, nudging off walls if it has to
+                    if (!piece || flashTicks > 0) return;
+                    const spun = rotate(piece.cells);
+                    const savedCells = piece.cells, savedX = piece.x;
+                    for (const kick of [0, -1, 1, -2, 2]) {
+                        piece.cells = spun;
+                        piece.x = savedX + kick;
+                        if (!hits(piece.x, piece.y)) { spunAt = performance.now(); return; }
+                    }
+                    piece.cells = savedCells;
+                    piece.x = savedX;
+                }
+                return { stepMs: 220, step, draw, click };
             }
 
             // — pac: chomps a dot row while a navy ghost tails him; sometimes has words —
@@ -3781,7 +3821,18 @@
                     ctx.arc(gx + 6, cy - 4, 3, 0, Math.PI * 2);
                     ctx.fill();
                 }
-                return { stepMs: 40, step, draw, cleanup: hideQuip };
+
+                function click(x, y) {
+                    // poke pac and he stops to say something
+                    if (pause > 0) return;
+                    const px = pac * CELL + CELL / 2;
+                    const cy = row * CELL + CELL / 2;
+                    if (Math.hypot(x - px, y - cy) < 70) {
+                        quipTicks = 70;
+                        showQuip(px, row * CELL - 6);
+                    }
+                }
+                return { stepMs: 40, step, draw, click, cleanup: hideQuip };
             }
 
             // — scene manager: rotate at random with crossfades, pausable —
@@ -3791,6 +3842,12 @@
             let scene = makers[sceneIdx]();
             let sceneStart = performance.now();
             let sceneLife = 45000 + Math.random() * 20000;
+
+            window.addEventListener('click', (e) => {
+                if (!running || !scene.click) return;
+                if (e.target.closest('a, button, input, textarea, select, nav, footer, .modal-card, .project-card, .game-arena, .mobile-game-overlay')) return;
+                scene.click(e.clientX, e.clientY);
+            });
 
             window.addEventListener('resize', () => {
                 resize();
