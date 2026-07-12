@@ -39,9 +39,22 @@
             color: #ffffff;
         }
 
+        html::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                radial-gradient(90rem 55rem at 85% -15%, rgba(24, 64, 245, 0.13), transparent 62%),
+                radial-gradient(70rem 45rem at -15% 45%, rgba(24, 64, 245, 0.09), transparent 60%),
+                radial-gradient(80rem 50rem at 110% 105%, rgba(79, 107, 255, 0.12), transparent 62%),
+                var(--bg-primary);
+        }
+
         body {
             font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background: var(--bg-primary);
+            background: transparent;
             color: var(--text-primary);
             line-height: 1.7;
             overflow-x: hidden;
