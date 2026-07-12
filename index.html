@@ -118,31 +118,88 @@
             align-items: center;
         }
 
-        .bg-toggle {
-            margin-left: 1rem;
-            padding: 0.3rem 0.8rem;
-            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
+        /* Toggle switches (bg animations + language) */
+        .switch-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             background: transparent;
-            border: 1px solid rgba(24, 64, 245, 0.35);
-            border-radius: 999px;
+            border: none;
+            padding: 0.3rem 0;
             cursor: pointer;
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
             white-space: nowrap;
-            transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .bg-toggle:hover {
+        .switch-btn:hover {
             color: var(--accent-primary);
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 12px rgba(24, 64, 245, 0.25);
+        }
+
+        .switch-track {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+            border-radius: 999px;
+            background: var(--accent-primary);
+            transition: background 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            transform: translateX(18px);
+            transition: transform 0.25s ease;
+        }
+
+        .switch-btn.off .switch-track {
+            background: #c3c9e8;
+        }
+
+        .switch-btn.off .switch-knob {
+            transform: translateX(0);
+        }
+
+        .bg-toggle {
+            margin-left: 1rem;
+        }
+
+        .lang-switch .switch-opt {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: color 0.25s ease;
+        }
+
+        .lang-switch .switch-opt.active {
+            color: var(--accent-primary);
+        }
+
+        .lang-switch .switch-knob {
+            transform: translateX(0);
+        }
+
+        .lang-switch.es .switch-knob {
+            transform: translateX(18px);
         }
 
         @media (max-width: 768px) {
             .bg-toggle {
                 margin-left: 0.6rem;
-                padding: 0.25rem 0.5rem;
-                font-size: 0.6rem;
+            }
+
+            .bg-toggle .switch-label {
+                display: none;
             }
         }
 
@@ -1313,7 +1370,10 @@
         <div class="nav-container">
             <div class="nav-brand">
                 <div class="logo">&lt;/VYK&gt;</div>
-                <button class="bg-toggle" id="bgToggle" data-i18n="bg_stop" aria-pressed="false">Stop animations</button>
+                <button class="switch-btn bg-toggle" id="bgToggle" role="switch" aria-checked="true" aria-label="Toggle background animations">
+                    <span class="switch-label" data-i18n="bg_label">Animations</span>
+                    <span class="switch-track"><span class="switch-knob"></span></span>
+                </button>
             </div>
             <button class="nav-toggle" id="navToggle" aria-label="Open menu">☰</button>
             <div class="nav-links">
@@ -1321,7 +1381,11 @@
                 <button class="nav-btn" onclick="scrollToSection('skills')" data-i18n="nav_skills">Skills</button>
                 <button class="nav-btn" onclick="scrollToSection('projects')" data-i18n="nav_projects">Projects</button>
                 <button class="nav-btn" onclick="scrollToSection('contact')" data-i18n="nav_contact">Contact</button>
-                <button class="nav-btn" id="langToggle" aria-label="Switch language">Español</button>
+                <button class="switch-btn lang-switch" id="langToggle" role="switch" aria-checked="false" aria-label="Switch language">
+                    <span class="switch-opt active" id="langOptEn">EN</span>
+                    <span class="switch-track"><span class="switch-knob"></span></span>
+                    <span class="switch-opt" id="langOptEs">ES</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -2275,8 +2339,7 @@
                 badge_pqc: 'Post-Quantum Cryptography',
                 badge_gamedev: 'Game Development',
                 cta_view_work: 'View My Work',
-                bg_stop: 'Stop animations',
-                bg_play: 'Play animations',
+                bg_label: 'Animations',
                 skills_tag: '// Expertise',
                 skills_title: 'Technical Skills',
                 skills_subtitle: 'A comprehensive toolkit for modern software development',
@@ -2350,8 +2413,7 @@
                 badge_pqc: 'Criptografía Post-Cuántica',
                 badge_gamedev: 'Desarrollo de Videojuegos',
                 cta_view_work: 'Ver Mi Trabajo',
-                bg_stop: 'Detener animaciones',
-                bg_play: 'Reanudar animaciones',
+                bg_label: 'Animaciones',
                 skills_tag: '// Experiencia',
                 skills_title: 'Habilidades Técnicas',
                 skills_subtitle: 'Herramientas para el desarrollo moderno',
@@ -2423,7 +2485,10 @@
                 }
             });
             updateGameButtonLabel();
-            langToggle.textContent = lang === 'en' ? 'Español' : 'English';
+            langToggle.classList.toggle('es', lang === 'es');
+            langToggle.setAttribute('aria-checked', String(lang === 'es'));
+            document.getElementById('langOptEn').classList.toggle('active', lang === 'en');
+            document.getElementById('langOptEs').classList.toggle('active', lang === 'es');
         }
 
         function updateGameButtonLabel() {
@@ -2970,12 +3035,8 @@
                 running = on;
                 document.body.classList.toggle('bg-paused', !on);
                 if (toggleBtn) {
-                    const key = on ? 'bg_stop' : 'bg_play';
-                    toggleBtn.setAttribute('data-i18n', key);
-                    let label = on ? 'Stop animations' : 'Play animations';
-                    try { label = translations[currentLang][key] || label; } catch (e) {}
-                    toggleBtn.textContent = label;
-                    toggleBtn.setAttribute('aria-pressed', String(!on));
+                    toggleBtn.classList.toggle('off', !on);
+                    toggleBtn.setAttribute('aria-checked', String(on));
                 }
                 try { localStorage.setItem('bgArcade', on ? 'on' : 'off'); } catch (e) {}
                 if (!on) {
