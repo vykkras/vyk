@@ -606,6 +606,70 @@
             object-fit: cover;
         }
 
+        .project-image.arcade-art {
+            background: var(--accent-primary);
+        }
+
+        .arcade-art svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .aa-chomp {
+            animation: aaChomp 0.4s linear infinite alternate;
+            transform-box: fill-box;
+            transform-origin: 0% 50%;
+        }
+
+        @keyframes aaChomp {
+            from { transform: scaleY(1); }
+            to { transform: scaleY(0.15); }
+        }
+
+        .aa-dot {
+            animation: aaDot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes aaDot {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 0.15; }
+        }
+
+        .aa-food {
+            animation: aaFood 1.6s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        @keyframes aaFood {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+        }
+
+        .aa-drift {
+            animation: aaDrift 5s ease-in-out infinite alternate;
+        }
+
+        .aa-drift2 {
+            animation: aaDrift 7s ease-in-out 1s infinite alternate-reverse;
+        }
+
+        @keyframes aaDrift {
+            from { transform: translateY(-5px); }
+            to { transform: translateY(6px); }
+        }
+
+        body.bg-paused .arcade-art svg * {
+            animation-play-state: paused;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .arcade-art svg * {
+                animation: none !important;
+            }
+        }
+
         .project-image .image-link {
             position: absolute;
             inset: 0;
@@ -1715,7 +1779,51 @@
                     </div>
                 </div>
                 <div class="project-card">
-                    <div class="project-image"></div>
+                    <div class="project-image arcade-art">
+                        <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                            <defs>
+                                <pattern id="aaGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <path d="M20 0H0V20" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                                </pattern>
+                            </defs>
+                            <rect width="400" height="200" fill="url(#aaGrid)"/>
+                            <g class="aa-drift">
+                                <rect x="30" y="130" width="17" height="17" rx="4" fill="#ffffff" opacity="0.35"/>
+                                <rect x="48" y="130" width="17" height="17" rx="4" fill="#ffffff" opacity="0.5"/>
+                                <rect x="66" y="130" width="17" height="17" rx="4" fill="#ffffff" opacity="0.65"/>
+                                <rect x="84" y="130" width="17" height="17" rx="4" fill="#ffffff" opacity="0.8"/>
+                                <rect x="84" y="112" width="17" height="17" rx="4" fill="#ffffff" opacity="0.9"/>
+                                <rect x="84" y="94" width="17" height="17" rx="4" fill="#ffffff"/>
+                                <circle class="aa-food" cx="92.5" cy="72" r="5" fill="#ffffff"/>
+                            </g>
+                            <g class="aa-drift2">
+                                <g fill="#ffffff" opacity="0.9">
+                                    <rect x="150" y="26" width="15" height="15" rx="3"/>
+                                    <rect x="166" y="26" width="15" height="15" rx="3"/>
+                                    <rect x="182" y="26" width="15" height="15" rx="3"/>
+                                    <rect x="166" y="42" width="15" height="15" rx="3"/>
+                                </g>
+                                <g fill="#ffffff" opacity="0.55">
+                                    <rect x="222" y="120" width="15" height="15" rx="3"/>
+                                    <rect x="222" y="136" width="15" height="15" rx="3"/>
+                                    <rect x="238" y="136" width="15" height="15" rx="3"/>
+                                    <rect x="254" y="136" width="15" height="15" rx="3"/>
+                                </g>
+                            </g>
+                            <g opacity="0.5">
+                                <path d="M226 100 a14 14 0 0 1 28 0 v12 l-4.6 -3.5 l-4.7 3.5 l-4.7 -3.5 l-4.7 3.5 l-4.7 -3.5 l-4.6 3.5 Z" fill="#ffffff"/>
+                                <circle cx="234.5" cy="96" r="2.8" fill="#1840f5"/>
+                                <circle cx="245.5" cy="96" r="2.8" fill="#1840f5"/>
+                            </g>
+                            <g>
+                                <circle cx="300" cy="100" r="22" fill="#ffffff"/>
+                                <path class="aa-chomp" d="M300 100 L336 84 L336 116 Z" fill="#1840f5"/>
+                                <circle class="aa-dot" cx="344" cy="100" r="4.5" fill="#ffffff"/>
+                                <circle class="aa-dot" style="animation-delay: 0.5s" cx="362" cy="100" r="4.5" fill="#ffffff"/>
+                                <circle class="aa-dot" style="animation-delay: 1s" cx="380" cy="100" r="4.5" fill="#ffffff"/>
+                            </g>
+                        </svg>
+                    </div>
                     <div class="project-content">
                         <h3 class="project-title" data-i18n="proj_snake_title">Bored? Play a Game :)</h3>
                         <p class="project-role" data-i18n="role_fun">Role: Fun Side Quest</p>
