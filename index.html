@@ -1050,6 +1050,34 @@
             scroll-behavior: smooth;
         }
 
+        /* Scroll-in reveals (gated on body.js-reveal so content shows without JS) */
+        body.js-reveal .reveal {
+            opacity: 0;
+        }
+
+        body.js-reveal .reveal.in-view {
+            opacity: 1;
+            animation: revealUp 0.6s ease backwards;
+        }
+
+        @keyframes revealUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body.js-reveal .reveal {
+                opacity: 1;
+                animation: none;
+            }
+        }
+
         /* Snake Game Styles */
         .game-button {
             background: var(--accent-primary);
@@ -2514,6 +2542,26 @@
                 navLinks.classList.remove('open');
             });
         });
+
+        // Reveal sections/cards as they scroll into view
+        (() => {
+            const els = document.querySelectorAll('.section-header, .skill-category, .project-card, .contact-item');
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+            document.body.classList.add('js-reveal');
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('in-view');
+                    obs.unobserve(entry.target);
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+            els.forEach((el) => {
+                el.classList.add('reveal');
+                const sibs = Array.from(el.parentElement.children).filter((c) => c.classList.contains('reveal'));
+                el.style.animationDelay = Math.min(sibs.indexOf(el), 5) * 80 + 'ms';
+                obs.observe(el);
+            });
+        })();
 
         // Project modal data + behavior
         const modalData = {
