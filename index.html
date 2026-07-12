@@ -1100,7 +1100,50 @@
             }
         }
 
-        /* Snake Game Styles */
+        /* Arcade Styles */
+        .game-tabs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .game-tab {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            border: 1px solid rgba(24, 64, 245, 0.35);
+            background: transparent;
+            color: var(--accent-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .game-tab:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .game-tab.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #ffffff;
+        }
+
+        .game-tabs-mobile {
+            margin: 0 0 0.75rem;
+        }
+
+        .game-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         .game-button {
             background: var(--accent-primary);
             color: #ffffff;
@@ -1234,7 +1277,7 @@
         .mobile-game-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(255, 255, 255, 0.97);
+            background: #ffffff;
             display: none;
             flex-direction: column;
             z-index: 3000;
@@ -1674,13 +1717,13 @@
                 <div class="project-card">
                     <div class="project-image"></div>
                     <div class="project-content">
-                        <h3 class="project-title" data-i18n="proj_snake_title">Bored? Play Snake</h3>
+                        <h3 class="project-title" data-i18n="proj_snake_title">Bored? Play a Game :)</h3>
                         <p class="project-role" data-i18n="role_fun">Role: Fun Side Quest</p>
-                        <p class="project-description" data-i18n="proj_snake_desc">A playful mini-game built into the site for quick breaks, fast reflexes, and a little nostalgia.</p>
+                        <p class="project-description" data-i18n="proj_snake_desc">Three retro mini-games — Snake, Tetris, and Pac — built into the site for quick breaks, fast reflexes, and a little nostalgia.</p>
                         <div class="project-actions">
-                            <button class="game-button in-project" id="gameButton" title="Play CyberSnake" data-i18n="play_snake">Play Snake</button>
+                            <button class="game-button in-project" id="gameButton" title="Open the arcade" data-i18n="play_snake">Play Arcade</button>
                         </div>
-                        <div class="snake-high-score"><span data-i18n="high_score">High Score</span>: <span id="snakeHighScore">0</span></div>
+                        <div class="snake-high-score"><span data-i18n="high_score">High Scores</span> — Snake <span id="hsSnake">0</span> · Tetris <span id="hsTetris">0</span> · Pac <span id="hsPac">0</span></div>
                     </div>
                 </div>
             </div>
@@ -1693,10 +1736,15 @@
             <div class="section-header">
                 <div class="section-tag" data-i18n="arena_tag">// Snake Arena</div>
                 <h2 class="section-title" data-i18n="arena_title">Playfield</h2>
-                <p class="section-subtitle" data-i18n="arena_subtitle">Starts when you hit “Play Snake” in Projects</p>
+                <p class="section-subtitle" data-i18n="arena_subtitle">Pick a game — keyboard on desktop, swipe or arrows on mobile</p>
+            </div>
+            <div class="game-tabs">
+                <button class="game-tab active" data-game="snake">Snake</button>
+                <button class="game-tab" data-game="tetris">Tetris</button>
+                <button class="game-tab" data-game="pac">Pac</button>
             </div>
             <div class="game-arena" id="gameArena"></div>
-            <p class="arena-help" id="arenaHelp" data-i18n="arena_help">Controls: Arrow Keys / WASD to move, Space for turbo, any other key to exit turbo.</p>
+            <p class="arena-help" id="arenaHelp" data-i18n="arena_help_snake">Controls: Arrow Keys / WASD to move, Space for turbo, any other key to exit turbo.</p>
             <button class="arena-close" id="arenaClose" data-i18n="close_game">Close Game</button>
         </div>
     </section>
@@ -1753,9 +1801,14 @@
     <!-- Mobile Game Overlay -->
     <div class="mobile-game-overlay" id="mobileGameOverlay" aria-hidden="true">
         <div class="mobile-game-header">
-            <div class="mobile-game-title">Snake Arena</div>
+            <div class="mobile-game-title">Arcade</div>
             <div class="mobile-game-score"><span data-i18n="score_label">SCORE</span>: <span id="mobileScore">0</span> · <span data-i18n="high_label">HIGH</span>: <span id="mobileHighScore">0</span></div>
             <button class="mobile-game-close" id="mobileGameClose">Close</button>
+        </div>
+        <div class="game-tabs game-tabs-mobile">
+            <button class="game-tab active" data-game="snake">Snake</button>
+            <button class="game-tab" data-game="tetris">Tetris</button>
+            <button class="game-tab" data-game="pac">Pac</button>
         </div>
         <div class="mobile-game-arena" id="mobileGameArena"></div>
         <div class="mobile-controls">
@@ -1800,28 +1853,11 @@
     </div>
 
     <script>
-        // On-Page Snake Game
-        let snake = [];
-        let snakeElements = [];
-        let foodElement = null;
-        let enemies = [];
-        let enemyElements = [];
-        let velocity = { x: 0, y: 0 };
-        let score = 0;
-        let highScore = 0;
-        let gameRunning = false;
-        let lastHitTime = 0;
-        let gameLoop;
-        const gridSize = 24;
-        const normalSpeed = 160;
-        const turboSpeed = 90;
-        let currentSpeed = normalSpeed;
-
+        // ── On-Page Arcade: Snake, Tetris & Pac ──
         const gameButton = document.getElementById('gameButton');
         const scoreDisplay = document.getElementById('gameScore');
         const scoreElement = document.getElementById('score');
         const highScoreElement = document.getElementById('highScore');
-        const snakeHighScoreElement = document.getElementById('snakeHighScore');
         const mobileScoreElement = document.getElementById('mobileScore');
         const mobileHighScoreElement = document.getElementById('mobileHighScore');
         const gameOverMessage = document.getElementById('gameOverMessage');
@@ -1841,491 +1877,1001 @@
         const navToggle = document.getElementById('navToggle');
         const navLinks = document.querySelector('.nav-links');
 
-        let activeArena = gameArena;
+        const gridSize = 24;
+        let arcadeOpen = false;
         let isMobileGame = false;
+        let activeArena = gameArena;
+        let currentGame = 'snake';
 
-        gameButton.addEventListener('click', toggleGame);
+        const highScores = { snake: 0, tetris: 0, pac: 0 };
+        try { Object.assign(highScores, JSON.parse(localStorage.getItem('vykArcadeHighs') || '{}')); } catch (e) {}
 
-        function toggleGame() {
-            if (!gameRunning) {
-                startGame();
-            } else {
-                endGame();
-            }
+        function saveHighs() {
+            try { localStorage.setItem('vykArcadeHighs', JSON.stringify(highScores)); } catch (e) {}
         }
 
-        function startGame() {
-            const startX = gridSize * 5;
-            const startY = gridSize * 5;
-            
-            snake = [
-                { x: startX, y: startY },
-                { x: startX - gridSize, y: startY },
-                { x: startX - gridSize * 2, y: startY }
-            ];
-            velocity = { x: 0, y: 0 }; // Don't move until key press
-            score = 0;
-            gameRunning = true;
-            const isMobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
-            isMobileGame = isMobile;
-            if (isMobileGame) {
-                activeArena = mobileGameArena;
-                mobileGameOverlay.classList.add('active');
-                mobileGameOverlay.setAttribute('aria-hidden', 'false');
-                document.body.classList.add('no-scroll');
-            } else {
-                activeArena = gameArena;
-                gameArenaSection.classList.add('active');
-                arenaHelp.style.display = 'block';
-                gameArenaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            // Update UI
-            gameButton.classList.add('playing');
-            updateGameButtonLabel();
-            if (isMobileGame) {
-                scoreDisplay.classList.remove('active');
-                mobileScoreElement.textContent = score;
-                mobileHighScoreElement.textContent = highScore;
-            } else {
-                scoreDisplay.classList.add('active');
-            }
-            scoreElement.textContent = score;
-            highScoreElement.textContent = highScore;
-            snakeHighScoreElement.textContent = highScore;
-            gameOverMessage.classList.remove('active');
-
-            // Create snake segments
-            createSnakeElements();
-            spawnFood();
-            createEnemies();
-
-            // Start game loop
-            currentSpeed = normalSpeed;
-            gameLoop = setInterval(update, currentSpeed);
+        function renderCardHighs() {
+            document.getElementById('hsSnake').textContent = highScores.snake;
+            document.getElementById('hsTetris').textContent = highScores.tetris;
+            document.getElementById('hsPac').textContent = highScores.pac;
         }
 
-        function endGame() {
-            gameRunning = false;
-            clearInterval(gameLoop);
-            gameButton.classList.remove('playing');
-            updateGameButtonLabel();
-            scoreDisplay.classList.remove('active');
-            if (isMobileGame) {
-                mobileGameOverlay.classList.remove('active');
-                mobileGameOverlay.setAttribute('aria-hidden', 'true');
-            } else {
-                gameArenaSection.classList.remove('active');
-                arenaHelp.style.display = 'none';
-            }
-            document.body.classList.remove('no-scroll');
-            clearSnakeElements();
-            clearEnemies();
-            if (foodElement) {
-                foodElement.remove();
-                foodElement = null;
-            }
-            snakeHighScoreElement.textContent = highScore;
-            mobileHighScoreElement.textContent = highScore;
+        function updateScoreUI(sc) {
+            scoreElement.textContent = sc;
+            mobileScoreElement.textContent = sc;
+            highScoreElement.textContent = highScores[currentGame];
+            mobileHighScoreElement.textContent = highScores[currentGame];
         }
 
-        function restartGame() {
-            endGame();
-            startGame();
+        function reportScore(sc) {
+            if (sc > highScores[currentGame]) {
+                highScores[currentGame] = sc;
+                saveHighs();
+                renderCardHighs();
+            }
+            updateScoreUI(sc);
         }
 
-        function createSnakeElements() {
-            clearSnakeElements();
-            snake.forEach((segment, index) => {
-                const segmentEl = document.createElement('div');
-                segmentEl.className = 'snake-segment';
-                segmentEl.style.left = segment.x + 'px';
-                segmentEl.style.top = segment.y + 'px';
-                
+        function makeCanvas() {
+            const c = document.createElement('canvas');
+            c.className = 'game-canvas';
+            const r = activeArena.getBoundingClientRect();
+            c.width = r.width;
+            c.height = r.height;
+            activeArena.appendChild(c);
+            return c;
+        }
+
+        function fillRoundedRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+            else ctx.rect(x, y, w, h);
+            ctx.fill();
+        }
+
+        // — Snake: the classic, with a wandering alien to dodge —
+        const snakeGame = (() => {
+            const normalSpeed = 160;
+            const turboSpeed = 90;
+            let snake = [];
+            let snakeElements = [];
+            let foodElement = null;
+            let enemies = [];
+            let enemyElements = [];
+            let velocity = { x: 0, y: 0 };
+            let score = 0;
+            let running = false;
+            let lastHitTime = 0;
+            let loop = null;
+            let currentSpeed = normalSpeed;
+
+            function segmentStyle(el, index) {
                 const opacity = 1 - (index / snake.length) * 0.4;
-                segmentEl.style.background = `linear-gradient(135deg, rgba(24, 64, 245, ${opacity}), rgba(10, 22, 80, ${opacity}))`;
-                
-                activeArena.appendChild(segmentEl);
-                snakeElements.push(segmentEl);
-            });
-        }
-
-        function clearSnakeElements() {
-            snakeElements.forEach(el => el.remove());
-            snakeElements = [];
-        }
-
-        function update() {
-            if (!gameRunning) return;
-
-            // Don't move until player presses a key
-            if (velocity.x === 0 && velocity.y === 0) {
-                return;
+                el.style.background = `linear-gradient(135deg, rgba(24, 64, 245, ${opacity}), rgba(10, 22, 80, ${opacity}))`;
             }
 
-            const arenaRect = activeArena.getBoundingClientRect();
-            const arenaWidth = arenaRect.width;
-            const arenaHeight = arenaRect.height;
-
-            // Calculate new head position
-            const head = {
-                x: snake[0].x + velocity.x,
-                y: snake[0].y + velocity.y
-            };
-
-            // Check wall collision
-            if (head.x < 0 || head.x >= arenaWidth - gridSize ||
-                head.y < 0 || head.y >= arenaHeight - gridSize) {
-                gameOver();
-                return;
+            function createSnakeElements() {
+                clearSnakeElements();
+                snake.forEach((segment, index) => {
+                    const segmentEl = document.createElement('div');
+                    segmentEl.className = 'snake-segment';
+                    segmentEl.style.left = segment.x + 'px';
+                    segmentEl.style.top = segment.y + 'px';
+                    segmentStyle(segmentEl, index);
+                    activeArena.appendChild(segmentEl);
+                    snakeElements.push(segmentEl);
+                });
             }
 
-            // Check self collision
-            for (let i = 1; i < snake.length; i++) {
-                if (Math.abs(head.x - snake[i].x) < gridSize && 
-                    Math.abs(head.y - snake[i].y) < gridSize) {
-                    gameOver();
+            function clearSnakeElements() {
+                snakeElements.forEach((el) => el.remove());
+                snakeElements = [];
+            }
+
+            function updateSnakeElements() {
+                while (snakeElements.length < snake.length) {
+                    const segmentEl = document.createElement('div');
+                    segmentEl.className = 'snake-segment';
+                    activeArena.appendChild(segmentEl);
+                    snakeElements.push(segmentEl);
+                }
+                while (snakeElements.length > snake.length) {
+                    snakeElements.pop().remove();
+                }
+                snake.forEach((segment, index) => {
+                    if (snakeElements[index]) {
+                        snakeElements[index].style.left = segment.x + 'px';
+                        snakeElements[index].style.top = segment.y + 'px';
+                        segmentStyle(snakeElements[index], index);
+                    }
+                });
+            }
+
+            function update() {
+                if (!running) return;
+                if (velocity.x === 0 && velocity.y === 0) return;
+
+                const arenaRect = activeArena.getBoundingClientRect();
+                const arenaWidth = arenaRect.width;
+                const arenaHeight = arenaRect.height;
+
+                const head = {
+                    x: snake[0].x + velocity.x,
+                    y: snake[0].y + velocity.y
+                };
+
+                if (head.x < 0 || head.x >= arenaWidth - gridSize ||
+                    head.y < 0 || head.y >= arenaHeight - gridSize) {
+                    arcadeGameOver(score);
                     return;
                 }
-            }
 
-            // Add new head
-            snake.unshift(head);
-
-            // Check food collision
-            if (foodElement) {
-                const foodRect = foodElement.getBoundingClientRect();
-                const foodX = foodRect.left - arenaRect.left;
-                const foodY = foodRect.top - arenaRect.top;
-                if (Math.abs(head.x - foodX) < gridSize && 
-                    Math.abs(head.y - foodY) < gridSize) {
-                    score++;
-                    scoreElement.textContent = score;
-                    mobileScoreElement.textContent = score;
-                    if (score > highScore) {
-                        highScore = score;
-                        highScoreElement.textContent = highScore;
-                        snakeHighScoreElement.textContent = highScore;
-                        mobileHighScoreElement.textContent = highScore;
+                for (let i = 1; i < snake.length; i++) {
+                    if (Math.abs(head.x - snake[i].x) < gridSize &&
+                        Math.abs(head.y - snake[i].y) < gridSize) {
+                        arcadeGameOver(score);
+                        return;
                     }
-                    foodElement.remove();
-                    spawnFood();
+                }
+
+                snake.unshift(head);
+
+                if (foodElement) {
+                    const foodRect = foodElement.getBoundingClientRect();
+                    const foodX = foodRect.left - arenaRect.left;
+                    const foodY = foodRect.top - arenaRect.top;
+                    if (Math.abs(head.x - foodX) < gridSize &&
+                        Math.abs(head.y - foodY) < gridSize) {
+                        score++;
+                        reportScore(score);
+                        foodElement.remove();
+                        spawnFood();
+                    } else {
+                        snake.pop();
+                    }
                 } else {
-                    // Remove tail if no food eaten
                     snake.pop();
                 }
-            } else {
-                snake.pop();
+
+                updateSnakeElements();
+                updateEnemies(arenaWidth, arenaHeight);
+                handleEnemyCollision();
             }
 
-            // Update visual elements
-            updateSnakeElements();
-            updateEnemies(arenaWidth, arenaHeight);
+            function spawnFood() {
+                let attempts = 0;
+                let foodPos;
 
-            handleEnemyCollision();
-        }
+                while (attempts < 100) {
+                    const arenaRect = activeArena.getBoundingClientRect();
+                    foodPos = {
+                        x: Math.floor(Math.random() * (arenaRect.width - gridSize) / gridSize) * gridSize,
+                        y: Math.floor(Math.random() * (arenaRect.height - gridSize) / gridSize) * gridSize
+                    };
 
-        function updateSnakeElements() {
-            // Remove excess elements or add new ones
-            while (snakeElements.length < snake.length) {
-                const segmentEl = document.createElement('div');
-                segmentEl.className = 'snake-segment';
-                activeArena.appendChild(segmentEl);
-                snakeElements.push(segmentEl);
-            }
-            while (snakeElements.length > snake.length) {
-                const removed = snakeElements.pop();
-                removed.remove();
-            }
-
-            // Update positions
-            snake.forEach((segment, index) => {
-                if (snakeElements[index]) {
-                    snakeElements[index].style.left = segment.x + 'px';
-                    snakeElements[index].style.top = segment.y + 'px';
-                    const opacity = 1 - (index / snake.length) * 0.4;
-                    snakeElements[index].style.background = `linear-gradient(135deg, rgba(24, 64, 245, ${opacity}), rgba(10, 22, 80, ${opacity}))`;
-                }
-            });
-        }
-
-        function spawnFood() {
-            let attempts = 0;
-            let foodPos;
-            
-            // Try to find a safe position away from edges and text
-            while (attempts < 100) {
-            const arenaRect = activeArena.getBoundingClientRect();
-                foodPos = {
-                    x: Math.floor(Math.random() * (arenaRect.width - gridSize) / gridSize) * gridSize,
-                    y: Math.floor(Math.random() * (arenaRect.height - gridSize) / gridSize) * gridSize
-                };
-
-                // Check if position is safe (not on text and not too close to snake)
-                let tooCloseToSnake = false;
-                for (let segment of snake) {
-                    if (Math.abs(foodPos.x - segment.x) < gridSize * 3 && 
-                        Math.abs(foodPos.y - segment.y) < gridSize * 3) {
-                        tooCloseToSnake = true;
-                        break;
+                    let tooCloseToSnake = false;
+                    for (let segment of snake) {
+                        if (Math.abs(foodPos.x - segment.x) < gridSize * 3 &&
+                            Math.abs(foodPos.y - segment.y) < gridSize * 3) {
+                            tooCloseToSnake = true;
+                            break;
+                        }
                     }
+
+                    if (!tooCloseToSnake) break;
+                    attempts++;
                 }
 
-                if (!tooCloseToSnake) {
-                    break;
+                if (attempts >= 100) {
+                    foodPos = { x: gridSize * 6, y: gridSize * 6 };
                 }
-                attempts++;
-            }
 
-            // Fallback to a simple position if we couldn't find a good spot
-            if (attempts >= 100) {
-                foodPos = { x: gridSize * 6, y: gridSize * 6 };
-            }
-
-            // Create robot food
-            foodElement = document.createElement('div');
-            foodElement.className = 'robot-food';
-            foodElement.style.left = foodPos.x + 'px';
-            foodElement.style.top = foodPos.y + 'px';
-            foodElement.innerHTML = `
-                <svg width="24" height="24" viewBox="0 0 20 20">
-                    <rect x="2" y="4" width="16" height="12" fill="#1840f5" rx="2"/>
-                    <rect x="5" y="7" width="3" height="3" fill="#ffffff"/>
-                    <rect x="12" y="7" width="3" height="3" fill="#ffffff"/>
-                    <line x1="10" y1="2" x2="10" y2="4" stroke="#1840f5" stroke-width="2"/>
-                    <circle cx="10" cy="2" r="2" fill="#1840f5"/>
-                </svg>
-            `;
-            activeArena.appendChild(foodElement);
-        }
-
-        function createEnemies() {
-            clearEnemies();
-            const arenaRect = activeArena.getBoundingClientRect();
-            const enemyCount = 1;
-            const enemySpeed = 6;
-            for (let i = 0; i < enemyCount; i++) {
-                const enemy = {
-                    x: Math.floor(Math.random() * (arenaRect.width - gridSize) / gridSize) * gridSize,
-                    y: Math.floor(Math.random() * (arenaRect.height - gridSize) / gridSize) * gridSize,
-                    vx: Math.random() > 0.5 ? enemySpeed : -enemySpeed,
-                    vy: Math.random() > 0.5 ? enemySpeed : -enemySpeed
-                };
-                enemies.push(enemy);
-
-                const enemyEl = document.createElement('div');
-                enemyEl.className = 'alien-enemy';
-                enemyEl.style.left = enemy.x + 'px';
-                enemyEl.style.top = enemy.y + 'px';
-                enemyEl.innerHTML = `
+                foodElement = document.createElement('div');
+                foodElement.className = 'robot-food';
+                foodElement.style.left = foodPos.x + 'px';
+                foodElement.style.top = foodPos.y + 'px';
+                foodElement.innerHTML = `
                     <svg width="24" height="24" viewBox="0 0 20 20">
-                        <rect x="3" y="4" width="14" height="12" fill="#ff3b3b" rx="3"/>
-                        <rect x="6" y="8" width="3" height="3" fill="#ffffff"/>
-                        <rect x="11" y="8" width="3" height="3" fill="#ffffff"/>
-                        <rect x="7" y="13" width="6" height="2" fill="#ffffff"/>
+                        <rect x="2" y="4" width="16" height="12" fill="#1840f5" rx="2"/>
+                        <rect x="5" y="7" width="3" height="3" fill="#ffffff"/>
+                        <rect x="12" y="7" width="3" height="3" fill="#ffffff"/>
+                        <line x1="10" y1="2" x2="10" y2="4" stroke="#1840f5" stroke-width="2"/>
+                        <circle cx="10" cy="2" r="2" fill="#1840f5"/>
                     </svg>
                 `;
-                activeArena.appendChild(enemyEl);
-                enemyElements.push(enemyEl);
+                activeArena.appendChild(foodElement);
             }
-        }
 
-        function updateEnemies(arenaWidth, arenaHeight) {
-            enemies.forEach((enemy, index) => {
-                enemy.x += enemy.vx;
-                enemy.y += enemy.vy;
+            function createEnemies() {
+                clearEnemies();
+                const arenaRect = activeArena.getBoundingClientRect();
+                const enemyCount = 1;
+                const enemySpeed = 6;
+                for (let i = 0; i < enemyCount; i++) {
+                    const enemy = {
+                        x: Math.floor(Math.random() * (arenaRect.width - gridSize) / gridSize) * gridSize,
+                        y: Math.floor(Math.random() * (arenaRect.height - gridSize) / gridSize) * gridSize,
+                        vx: Math.random() > 0.5 ? enemySpeed : -enemySpeed,
+                        vy: Math.random() > 0.5 ? enemySpeed : -enemySpeed
+                    };
+                    enemies.push(enemy);
 
-                if (enemy.x <= 0 || enemy.x >= arenaWidth - gridSize) {
-                    enemy.vx *= -1;
-                    enemy.x = Math.max(0, Math.min(enemy.x, arenaWidth - gridSize));
+                    const enemyEl = document.createElement('div');
+                    enemyEl.className = 'alien-enemy';
+                    enemyEl.style.left = enemy.x + 'px';
+                    enemyEl.style.top = enemy.y + 'px';
+                    enemyEl.innerHTML = `
+                        <svg width="24" height="24" viewBox="0 0 20 20">
+                            <rect x="3" y="4" width="14" height="12" fill="#ff3b3b" rx="3"/>
+                            <rect x="6" y="8" width="3" height="3" fill="#ffffff"/>
+                            <rect x="11" y="8" width="3" height="3" fill="#ffffff"/>
+                            <rect x="7" y="13" width="6" height="2" fill="#ffffff"/>
+                        </svg>
+                    `;
+                    activeArena.appendChild(enemyEl);
+                    enemyElements.push(enemyEl);
                 }
-                if (enemy.y <= 0 || enemy.y >= arenaHeight - gridSize) {
-                    enemy.vy *= -1;
-                    enemy.y = Math.max(0, Math.min(enemy.y, arenaHeight - gridSize));
-                }
-
-                if (enemyElements[index]) {
-                    enemyElements[index].style.left = enemy.x + 'px';
-                    enemyElements[index].style.top = enemy.y + 'px';
-                }
-            });
-        }
-
-        function handleEnemyCollision() {
-            const now = Date.now();
-            if (now - lastHitTime < 400) return;
-
-            const hit = enemies.some((enemy) =>
-                snake.some((segment) =>
-                    Math.abs(segment.x - enemy.x) < gridSize &&
-                    Math.abs(segment.y - enemy.y) < gridSize
-                )
-            );
-
-            if (!hit) return;
-
-            lastHitTime = now;
-            const damage = Math.min(3, snake.length - 1);
-            if (damage <= 0) {
-                gameOver();
-                return;
             }
-            snake.splice(-damage, damage);
-            updateSnakeElements();
-        }
 
-        function clearEnemies() {
-            enemyElements.forEach((el) => el.remove());
-            enemyElements = [];
-            enemies = [];
-        }
+            function updateEnemies(arenaWidth, arenaHeight) {
+                enemies.forEach((enemy, index) => {
+                    enemy.x += enemy.vx;
+                    enemy.y += enemy.vy;
 
-        function setGameSpeed(speed) {
-            if (currentSpeed === speed) return;
-            currentSpeed = speed;
-            clearInterval(gameLoop);
-            gameLoop = setInterval(update, currentSpeed);
-        }
+                    if (enemy.x <= 0 || enemy.x >= arenaWidth - gridSize) {
+                        enemy.vx *= -1;
+                        enemy.x = Math.max(0, Math.min(enemy.x, arenaWidth - gridSize));
+                    }
+                    if (enemy.y <= 0 || enemy.y >= arenaHeight - gridSize) {
+                        enemy.vy *= -1;
+                        enemy.y = Math.max(0, Math.min(enemy.y, arenaHeight - gridSize));
+                    }
 
-        function gameOver() {
-            gameRunning = false;
-            clearInterval(gameLoop);
-            finalScoreElement.textContent = score;
-            gameOverMessage.classList.add('active');
-            if (isMobileGame) {
-                mobileGameOverlay.classList.remove('active');
-                mobileGameOverlay.setAttribute('aria-hidden', 'true');
-            } else {
-                gameArenaSection.classList.remove('active');
-                arenaHelp.style.display = 'none';
+                    if (enemyElements[index]) {
+                        enemyElements[index].style.left = enemy.x + 'px';
+                        enemyElements[index].style.top = enemy.y + 'px';
+                    }
+                });
             }
-            document.body.classList.remove('no-scroll');
-            setTimeout(() => {
+
+            function handleEnemyCollision() {
+                const now = Date.now();
+                if (now - lastHitTime < 400) return;
+
+                const hit = enemies.some((enemy) =>
+                    snake.some((segment) =>
+                        Math.abs(segment.x - enemy.x) < gridSize &&
+                        Math.abs(segment.y - enemy.y) < gridSize
+                    )
+                );
+
+                if (!hit) return;
+
+                lastHitTime = now;
+                const damage = Math.min(3, snake.length - 1);
+                if (damage <= 0) {
+                    arcadeGameOver(score);
+                    return;
+                }
+                snake.splice(-damage, damage);
+                updateSnakeElements();
+            }
+
+            function clearEnemies() {
+                enemyElements.forEach((el) => el.remove());
+                enemyElements = [];
+                enemies = [];
+            }
+
+            function setSpeed(speed) {
+                if (currentSpeed === speed) return;
+                currentSpeed = speed;
+                clearInterval(loop);
+                loop = setInterval(update, currentSpeed);
+            }
+
+            function start() {
+                const startX = gridSize * 5;
+                const startY = gridSize * 5;
+                snake = [
+                    { x: startX, y: startY },
+                    { x: startX - gridSize, y: startY },
+                    { x: startX - gridSize * 2, y: startY }
+                ];
+                velocity = { x: 0, y: 0 };
+                score = 0;
+                reportScore(0);
+                createSnakeElements();
+                spawnFood();
+                createEnemies();
+                currentSpeed = normalSpeed;
+                loop = setInterval(update, currentSpeed);
+                running = true;
+            }
+
+            function stop() {
+                running = false;
+                clearInterval(loop);
                 clearSnakeElements();
                 clearEnemies();
                 if (foodElement) {
                     foodElement.remove();
                     foodElement = null;
                 }
-                gameButton.classList.remove('playing');
-                updateGameButtonLabel();
-                scoreDisplay.classList.remove('active');
-            }, 100);
+            }
+
+            function input(dir) {
+                if (!running) return;
+                if (dir === 'up' && velocity.y === 0) velocity = { x: 0, y: -gridSize };
+                if (dir === 'down' && velocity.y === 0) velocity = { x: 0, y: gridSize };
+                if (dir === 'left' && velocity.x === 0) velocity = { x: -gridSize, y: 0 };
+                if (dir === 'right' && velocity.x === 0) velocity = { x: gridSize, y: 0 };
+            }
+
+            function key(e) {
+                switch (e.key) {
+                    case ' ':
+                        setSpeed(turboSpeed);
+                        e.preventDefault();
+                        return;
+                    case 'ArrowUp': case 'w': case 'W':
+                        input('up');
+                        e.preventDefault();
+                        break;
+                    case 'ArrowDown': case 's': case 'S':
+                        input('down');
+                        e.preventDefault();
+                        break;
+                    case 'ArrowLeft': case 'a': case 'A':
+                        input('left');
+                        e.preventDefault();
+                        break;
+                    case 'ArrowRight': case 'd': case 'D':
+                        input('right');
+                        e.preventDefault();
+                        break;
+                }
+                if (currentSpeed === turboSpeed) setSpeed(normalSpeed);
+            }
+
+            return { start, stop, input, key };
+        })();
+
+        // — Tetris: 10×18 board, line clears speed things up —
+        const tetrisGame = (() => {
+            const COLS = 10;
+            const ROWS = 18;
+            const SHAPES = [
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                [[0, 0], [1, 0], [0, 1], [1, 1]],
+                [[0, 0], [1, 0], [2, 0], [1, 1]],
+                [[1, 0], [2, 0], [0, 1], [1, 1]],
+                [[0, 0], [1, 0], [1, 1], [2, 1]],
+                [[0, 0], [0, 1], [1, 1], [2, 1]],
+                [[2, 0], [0, 1], [1, 1], [2, 1]]
+            ];
+            let canvas = null, ctx = null;
+            let cell = 0, offX = 0, offY = 0;
+            let board = [];
+            let piece = null;
+            let score = 0, lines = 0, speed = 650;
+            let running = false;
+            let dropTimer = null;
+
+            function rotated(cells) {
+                const r = cells.map(([x, y]) => [y, -x]);
+                const minX = Math.min(...r.map((c) => c[0]));
+                const minY = Math.min(...r.map((c) => c[1]));
+                return r.map(([x, y]) => [x - minX, y - minY]);
+            }
+
+            function collides(cells, px, py) {
+                return cells.some(([cx, cy]) => {
+                    const x = px + cx, y = py + cy;
+                    return x < 0 || x >= COLS || y >= ROWS || (y >= 0 && board[y][x]);
+                });
+            }
+
+            function newPiece() {
+                const cells = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+                const w = Math.max(...cells.map((c) => c[0])) + 1;
+                piece = { cells, x: Math.floor((COLS - w) / 2), y: -1 };
+                if (collides(piece.cells, piece.x, piece.y)) {
+                    arcadeGameOver(score);
+                }
+            }
+
+            function clearFullLines() {
+                let n = 0;
+                for (let y = ROWS - 1; y >= 0; y--) {
+                    if (board[y].every(Boolean)) {
+                        board.splice(y, 1);
+                        board.unshift(new Array(COLS).fill(0));
+                        n++;
+                        y++;
+                    }
+                }
+                if (!n) return;
+                lines += n;
+                score += [0, 100, 300, 500, 800][n];
+                reportScore(score);
+                const target = Math.max(140, 650 - lines * 25);
+                if (target !== speed) {
+                    speed = target;
+                    clearInterval(dropTimer);
+                    dropTimer = setInterval(stepDown, speed);
+                }
+            }
+
+            function merge() {
+                const topped = piece.cells.some(([cx, cy]) => piece.y + cy < 0);
+                piece.cells.forEach(([cx, cy]) => {
+                    const y = piece.y + cy;
+                    if (y >= 0) board[y][piece.x + cx] = 1;
+                });
+                if (topped) {
+                    arcadeGameOver(score);
+                    return false;
+                }
+                clearFullLines();
+                newPiece();
+                return running;
+            }
+
+            function stepDown() {
+                if (!running) return;
+                if (!collides(piece.cells, piece.x, piece.y + 1)) piece.y++;
+                else if (!merge()) return;
+                draw();
+            }
+
+            function hardDrop() {
+                while (!collides(piece.cells, piece.x, piece.y + 1)) piece.y++;
+                score += 2;
+                reportScore(score);
+                if (merge()) draw();
+            }
+
+            function move(dx) {
+                if (!collides(piece.cells, piece.x + dx, piece.y)) {
+                    piece.x += dx;
+                    draw();
+                }
+            }
+
+            function rotatePiece() {
+                const r = rotated(piece.cells);
+                const w = Math.max(...r.map((c) => c[0])) + 1;
+                const px = Math.min(piece.x, COLS - w);
+                if (!collides(r, px, piece.y)) {
+                    piece.cells = r;
+                    piece.x = px;
+                    draw();
+                }
+            }
+
+            function draw() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'rgba(24, 64, 245, 0.35)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(offX - 5, offY - 5, cell * COLS + 10, cell * ROWS + 10);
+                ctx.fillStyle = 'rgba(10, 22, 80, 0.75)';
+                for (let y = 0; y < ROWS; y++) {
+                    for (let x = 0; x < COLS; x++) {
+                        if (board[y][x]) fillRoundedRect(ctx, offX + x * cell + 1, offY + y * cell + 1, cell - 2, cell - 2, 3);
+                    }
+                }
+                if (!piece) return;
+                ctx.fillStyle = 'rgba(24, 64, 245, 0.95)';
+                piece.cells.forEach(([cx, cy]) => {
+                    const y = piece.y + cy;
+                    if (y >= 0) fillRoundedRect(ctx, offX + (piece.x + cx) * cell + 1, offY + y * cell + 1, cell - 2, cell - 2, 3);
+                });
+            }
+
+            function start() {
+                canvas = makeCanvas();
+                ctx = canvas.getContext('2d');
+                cell = Math.floor(Math.min((canvas.width - 24) / COLS, (canvas.height - 24) / ROWS));
+                offX = Math.floor((canvas.width - cell * COLS) / 2);
+                offY = Math.floor((canvas.height - cell * ROWS) / 2);
+                board = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+                score = 0;
+                lines = 0;
+                speed = 650;
+                reportScore(0);
+                running = true;
+                newPiece();
+                draw();
+                dropTimer = setInterval(stepDown, speed);
+            }
+
+            function stop() {
+                running = false;
+                clearInterval(dropTimer);
+                if (canvas) {
+                    canvas.remove();
+                    canvas = null;
+                    ctx = null;
+                }
+            }
+
+            function input(dir) {
+                if (!running) return;
+                if (dir === 'left') move(-1);
+                if (dir === 'right') move(1);
+                if (dir === 'up') rotatePiece();
+                if (dir === 'down') stepDown();
+            }
+
+            function key(e) {
+                if (!running) return;
+                switch (e.key) {
+                    case 'ArrowLeft': case 'a': case 'A':
+                        input('left');
+                        e.preventDefault();
+                        break;
+                    case 'ArrowRight': case 'd': case 'D':
+                        input('right');
+                        e.preventDefault();
+                        break;
+                    case 'ArrowUp': case 'w': case 'W':
+                        input('up');
+                        e.preventDefault();
+                        break;
+                    case 'ArrowDown': case 's': case 'S':
+                        input('down');
+                        e.preventDefault();
+                        break;
+                    case ' ':
+                        hardDrop();
+                        e.preventDefault();
+                        break;
+                }
+            }
+
+            return { start, stop, input, key };
+        })();
+
+        // — Pac: pellet maze with two ghosts and power pellets —
+        const pacGame = (() => {
+            const MAZE = [
+                '###############',
+                '#o.....#.....o#',
+                '#.###..#..###.#',
+                '#.............#',
+                '#.##.##.##.##.#',
+                '#....#...#....#',
+                '##.#.#.#.#.#.##',
+                '#....#...#....#',
+                '#.##.##.##.##.#',
+                '#.............#',
+                '#.###..#..###.#',
+                '#o.....#.....o#',
+                '###############'
+            ];
+            const ROWS = MAZE.length;
+            const COLS = MAZE[0].length;
+            const PAC_START = { x: 7, y: 9 };
+            const GHOST_STARTS = [{ x: 6, y: 6 }, { x: 8, y: 6 }];
+            const DIRS = {
+                up: { x: 0, y: -1 },
+                down: { x: 0, y: 1 },
+                left: { x: -1, y: 0 },
+                right: { x: 1, y: 0 }
+            };
+            const REVERSE = { up: 'down', down: 'up', left: 'right', right: 'left' };
+
+            let canvas = null, ctx = null;
+            let cell = 0, offX = 0, offY = 0;
+            let grid = [];
+            let pelletsLeft = 0;
+            let pac = null;
+            let ghosts = [];
+            let score = 0, lives = 3;
+            let frightenedUntil = 0, freezeUntil = 0;
+            let running = false;
+            let raf = 0, last = 0, accP = 0, accG = 0;
+            let stepMs = 150, ghostMs = 170;
+
+            function wall(x, y) {
+                return x < 0 || x >= COLS || y < 0 || y >= ROWS || grid[y][x] === '#';
+            }
+
+            function resetGrid() {
+                grid = MAZE.map((r) => r.split(''));
+                pelletsLeft = 0;
+                grid.forEach((row) => row.forEach((ch) => {
+                    if (ch === '.' || ch === 'o') pelletsLeft++;
+                }));
+            }
+
+            function resetPositions() {
+                pac = { x: PAC_START.x, y: PAC_START.y, px: PAC_START.x, py: PAC_START.y, dir: 'left', want: 'left' };
+                ghosts = GHOST_STARTS.map((g, i) => ({
+                    x: g.x, y: g.y, px: g.x, py: g.y, dir: i === 0 ? 'up' : 'down', chaser: i === 0
+                }));
+                accP = 0;
+                accG = 0;
+            }
+
+            function stepPac() {
+                pac.px = pac.x;
+                pac.py = pac.y;
+                const w = DIRS[pac.want];
+                if (!wall(pac.x + w.x, pac.y + w.y)) pac.dir = pac.want;
+                const d = DIRS[pac.dir];
+                if (!wall(pac.x + d.x, pac.y + d.y)) {
+                    pac.x += d.x;
+                    pac.y += d.y;
+                }
+                const ch = grid[pac.y][pac.x];
+                if (ch !== '.' && ch !== 'o') return;
+                grid[pac.y][pac.x] = ' ';
+                pelletsLeft--;
+                score += ch === 'o' ? 50 : 10;
+                if (ch === 'o') frightenedUntil = performance.now() + 6000;
+                reportScore(score);
+                if (pelletsLeft === 0) {
+                    stepMs = Math.max(105, stepMs - 12);
+                    ghostMs = Math.max(120, ghostMs - 12);
+                    resetGrid();
+                    resetPositions();
+                    freezeUntil = performance.now() + 900;
+                }
+            }
+
+            function ghostDist(g, dirKey, fright) {
+                const d = DIRS[dirKey];
+                const m = Math.abs(g.x + d.x - pac.x) + Math.abs(g.y + d.y - pac.y);
+                return fright ? -m : m;
+            }
+
+            function stepGhosts() {
+                const fright = performance.now() < frightenedUntil;
+                ghosts.forEach((g) => {
+                    g.px = g.x;
+                    g.py = g.y;
+                    const opts = Object.keys(DIRS).filter((k) => {
+                        const d = DIRS[k];
+                        return !wall(g.x + d.x, g.y + d.y);
+                    });
+                    const fwd = opts.filter((k) => k !== REVERSE[g.dir]);
+                    const pool = fwd.length ? fwd : opts;
+                    let pick;
+                    if (g.chaser || Math.random() < 0.5) {
+                        pool.sort((a, b) => ghostDist(g, a, fright) - ghostDist(g, b, fright));
+                        pick = pool[0];
+                        if (!g.chaser && pool.length > 1 && Math.random() < 0.35) {
+                            pick = pool[1 + Math.floor(Math.random() * (pool.length - 1))];
+                        }
+                    } else {
+                        pick = pool[Math.floor(Math.random() * pool.length)];
+                    }
+                    g.dir = pick;
+                    const d = DIRS[pick];
+                    g.x += d.x;
+                    g.y += d.y;
+                });
+            }
+
+            function lerp(a, b, t) {
+                return a + (b - a) * t;
+            }
+
+            function checkCollisions() {
+                const tP = Math.min(accP / stepMs, 1);
+                const tG = Math.min(accG / ghostMs, 1);
+                const px = lerp(pac.px, pac.x, tP);
+                const py = lerp(pac.py, pac.y, tP);
+                const fright = performance.now() < frightenedUntil;
+                for (let i = 0; i < ghosts.length; i++) {
+                    const g = ghosts[i];
+                    const gx = lerp(g.px, g.x, tG);
+                    const gy = lerp(g.py, g.y, tG);
+                    if (Math.abs(gx - px) >= 0.6 || Math.abs(gy - py) >= 0.6) continue;
+                    if (fright) {
+                        score += 200;
+                        reportScore(score);
+                        const home = GHOST_STARTS[i];
+                        g.x = home.x; g.y = home.y;
+                        g.px = home.x; g.py = home.y;
+                    } else {
+                        lives--;
+                        if (lives <= 0) {
+                            arcadeGameOver(score);
+                            return;
+                        }
+                        resetPositions();
+                        freezeUntil = performance.now() + 900;
+                    }
+                    break;
+                }
+            }
+
+            function draw() {
+                if (!ctx) return;
+                const now = performance.now();
+                const fright = now < frightenedUntil;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = 'rgba(24, 64, 245, 0.16)';
+                for (let y = 0; y < ROWS; y++) {
+                    for (let x = 0; x < COLS; x++) {
+                        if (grid[y][x] === '#') fillRoundedRect(ctx, offX + x * cell + 1, offY + y * cell + 1, cell - 2, cell - 2, 3);
+                    }
+                }
+
+                ctx.fillStyle = 'rgba(10, 22, 80, 0.55)';
+                for (let y = 0; y < ROWS; y++) {
+                    for (let x = 0; x < COLS; x++) {
+                        const ch = grid[y][x];
+                        if (ch === '.') {
+                            ctx.beginPath();
+                            ctx.arc(offX + (x + 0.5) * cell, offY + (y + 0.5) * cell, Math.max(2, cell * 0.08), 0, Math.PI * 2);
+                            ctx.fill();
+                        } else if (ch === 'o') {
+                            const pulse = 0.5 + 0.5 * Math.sin(now / 250);
+                            ctx.beginPath();
+                            ctx.arc(offX + (x + 0.5) * cell, offY + (y + 0.5) * cell, cell * (0.16 + 0.08 * pulse), 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                }
+
+                const tP = Math.min(accP / stepMs, 1);
+                const tG = Math.min(accG / ghostMs, 1);
+
+                const px = offX + (lerp(pac.px, pac.x, tP) + 0.5) * cell;
+                const py = offY + (lerp(pac.py, pac.y, tP) + 0.5) * cell;
+                const mouth = 0.12 + 0.16 * Math.abs(Math.sin(now / 110));
+                const ang = { right: 0, down: Math.PI / 2, left: Math.PI, up: -Math.PI / 2 }[pac.dir];
+                ctx.fillStyle = '#1840f5';
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.arc(px, py, cell * 0.42, ang + mouth * Math.PI, ang - mouth * Math.PI);
+                ctx.closePath();
+                ctx.fill();
+
+                ghosts.forEach((g, i) => {
+                    const gx = offX + (lerp(g.px, g.x, tG) + 0.5) * cell;
+                    const gy = offY + (lerp(g.py, g.y, tG) + 0.5) * cell;
+                    const r = cell * 0.4;
+                    const blink = fright && frightenedUntil - now < 1800 && Math.floor(now / 220) % 2 === 0;
+                    ctx.fillStyle = fright ? (blink ? 'rgba(159, 177, 255, 0.5)' : '#9fb1ff') : (i === 0 ? '#ff3b3b' : '#0a1650');
+                    ctx.beginPath();
+                    ctx.arc(gx, gy - r * 0.15, r, Math.PI, 0);
+                    ctx.lineTo(gx + r, gy + r * 0.7);
+                    ctx.lineTo(gx + r * 0.6, gy + r * 0.95);
+                    ctx.lineTo(gx + r * 0.2, gy + r * 0.7);
+                    ctx.lineTo(gx - r * 0.2, gy + r * 0.95);
+                    ctx.lineTo(gx - r * 0.6, gy + r * 0.7);
+                    ctx.lineTo(gx - r, gy + r * 0.95);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(gx - r * 0.35, gy - r * 0.25, r * 0.18, 0, Math.PI * 2);
+                    ctx.arc(gx + r * 0.35, gy - r * 0.25, r * 0.18, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                ctx.fillStyle = '#1840f5';
+                for (let i = 0; i < lives; i++) {
+                    ctx.beginPath();
+                    ctx.arc(offX + 10 + i * 18, canvas.height - 12, 6, 0.2 * Math.PI, -0.2 * Math.PI);
+                    ctx.lineTo(offX + 10 + i * 18, canvas.height - 12);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+
+            function frame(now) {
+                if (!running) return;
+                const dt = Math.min(now - last, 100);
+                last = now;
+                if (now >= freezeUntil) {
+                    accP += dt;
+                    accG += dt;
+                }
+                while (accP >= stepMs) {
+                    stepPac();
+                    accP -= stepMs;
+                    if (!running) return;
+                }
+                while (accG >= ghostMs) {
+                    stepGhosts();
+                    accG -= ghostMs;
+                }
+                checkCollisions();
+                if (!running) return;
+                draw();
+                raf = requestAnimationFrame(frame);
+            }
+
+            function start() {
+                canvas = makeCanvas();
+                ctx = canvas.getContext('2d');
+                cell = Math.floor(Math.min(canvas.width / COLS, (canvas.height - 24) / ROWS));
+                offX = Math.floor((canvas.width - cell * COLS) / 2);
+                offY = Math.floor((canvas.height - 24 - cell * ROWS) / 2);
+                score = 0;
+                lives = 3;
+                stepMs = 150;
+                ghostMs = 170;
+                frightenedUntil = 0;
+                resetGrid();
+                resetPositions();
+                reportScore(0);
+                running = true;
+                freezeUntil = performance.now() + 700;
+                last = performance.now();
+                draw();
+                raf = requestAnimationFrame(frame);
+            }
+
+            function stop() {
+                running = false;
+                cancelAnimationFrame(raf);
+                if (canvas) {
+                    canvas.remove();
+                    canvas = null;
+                    ctx = null;
+                }
+            }
+
+            function input(dir) {
+                if (running && DIRS[dir]) pac.want = dir;
+            }
+
+            function key(e) {
+                const map = {
+                    ArrowUp: 'up', w: 'up', W: 'up',
+                    ArrowDown: 'down', s: 'down', S: 'down',
+                    ArrowLeft: 'left', a: 'left', A: 'left',
+                    ArrowRight: 'right', d: 'right', D: 'right'
+                };
+                const dir = map[e.key];
+                if (dir) {
+                    input(dir);
+                    e.preventDefault();
+                }
+            }
+
+            return { start, stop, input, key };
+        })();
+
+        const games = { snake: snakeGame, tetris: tetrisGame, pac: pacGame };
+
+        // — Arcade shell: shared open/close, tabs, game over —
+        gameButton.addEventListener('click', toggleGame);
+
+        function toggleGame() {
+            if (arcadeOpen) closeArcade();
+            else openArcade();
         }
 
-        // Keyboard controls
+        function openArcade() {
+            if (arcadeOpen) games[currentGame].stop();
+            isMobileGame = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+            activeArena = isMobileGame ? mobileGameArena : gameArena;
+            if (isMobileGame) {
+                mobileGameOverlay.classList.add('active');
+                mobileGameOverlay.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('no-scroll');
+            } else {
+                gameArenaSection.classList.add('active');
+                arenaHelp.style.display = 'block';
+                gameArenaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                scoreDisplay.classList.add('active');
+            }
+            gameButton.classList.add('playing');
+            updateGameButtonLabel();
+            gameOverMessage.classList.remove('active');
+            arcadeOpen = true;
+            updateArenaHelp();
+            games[currentGame].start();
+        }
+
+        function closeArcade() {
+            if (arcadeOpen) games[currentGame].stop();
+            arcadeOpen = false;
+            gameButton.classList.remove('playing');
+            updateGameButtonLabel();
+            scoreDisplay.classList.remove('active');
+            mobileGameOverlay.classList.remove('active');
+            mobileGameOverlay.setAttribute('aria-hidden', 'true');
+            gameArenaSection.classList.remove('active');
+            arenaHelp.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        }
+
+        function arcadeGameOver(sc) {
+            games[currentGame].stop();
+            arcadeOpen = false;
+            finalScoreElement.textContent = sc;
+            gameOverMessage.classList.add('active');
+            mobileGameOverlay.classList.remove('active');
+            mobileGameOverlay.setAttribute('aria-hidden', 'true');
+            gameArenaSection.classList.remove('active');
+            arenaHelp.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+            gameButton.classList.remove('playing');
+            updateGameButtonLabel();
+            scoreDisplay.classList.remove('active');
+        }
+
+        function restartGame() {
+            gameOverMessage.classList.remove('active');
+            openArcade();
+        }
+
+        const gameTabs = document.querySelectorAll('.game-tab');
+
+        function selectGame(g) {
+            if (g === currentGame) return;
+            gameTabs.forEach((t) => t.classList.toggle('active', t.getAttribute('data-game') === g));
+            if (arcadeOpen) games[currentGame].stop();
+            currentGame = g;
+            updateArenaHelp();
+            if (arcadeOpen) {
+                gameOverMessage.classList.remove('active');
+                games[g].start();
+            }
+        }
+
+        gameTabs.forEach((tab) => {
+            tab.addEventListener('click', () => selectGame(tab.getAttribute('data-game')));
+        });
+
+        function updateArenaHelp() {
+            const helpKey = 'arena_help_' + currentGame;
+            arenaHelp.setAttribute('data-i18n', helpKey);
+            try { arenaHelp.textContent = translations[currentLang][helpKey]; } catch (e) {}
+        }
+
         document.addEventListener('keydown', (e) => {
-            if (!gameRunning) return;
-
-            let keyHandled = false;
-
-            switch (e.key) {
-                case ' ':
-                    setGameSpeed(turboSpeed);
-                    keyHandled = true;
-                    e.preventDefault();
-                    break;
-                case 'ArrowUp':
-                case 'w':
-                case 'W':
-                    if (velocity.y === 0) {
-                        velocity = { x: 0, y: -gridSize };
-                        keyHandled = true;
-                        e.preventDefault();
-                    }
-                    break;
-                case 'ArrowDown':
-                case 's':
-                case 'S':
-                    if (velocity.y === 0) {
-                        velocity = { x: 0, y: gridSize };
-                        keyHandled = true;
-                        e.preventDefault();
-                    }
-                    break;
-                case 'ArrowLeft':
-                case 'a':
-                case 'A':
-                    if (velocity.x === 0) {
-                        velocity = { x: -gridSize, y: 0 };
-                        keyHandled = true;
-                        e.preventDefault();
-                    }
-                    break;
-                case 'ArrowRight':
-                case 'd':
-                case 'D':
-                    if (velocity.x === 0) {
-                        velocity = { x: gridSize, y: 0 };
-                        keyHandled = true;
-                        e.preventDefault();
-                    }
-                    break;
+            if (!arcadeOpen) return;
+            if (e.key === 'Escape') {
+                closeArcade();
+                return;
             }
-
-
-            if (e.key !== ' ' && currentSpeed === turboSpeed) {
-                setGameSpeed(normalSpeed);
-            }
+            games[currentGame].key(e);
         });
 
-        arenaClose.addEventListener('click', () => {
-            endGame();
-            gameOverMessage.classList.remove('active');
-        });
-
-        closeGameFromOver.addEventListener('click', () => {
-            endGame();
-            gameOverMessage.classList.remove('active');
-        });
-
-        // Touch controls for mobile
+        // Touch controls: swipe on either arena, d-pad buttons on mobile
         let touchStartX = 0;
         let touchStartY = 0;
         const touchThreshold = 30;
 
-        gameArena.addEventListener('touchstart', (e) => {
-            if (!gameRunning) return;
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-        }, { passive: true });
+        function bindSwipe(el) {
+            el.addEventListener('touchstart', (e) => {
+                if (!arcadeOpen) return;
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+            }, { passive: true });
 
-        gameArena.addEventListener('touchmove', (e) => {
-            if (!gameRunning) return;
-            const touch = e.touches[0];
-            const dx = touch.clientX - touchStartX;
-            const dy = touch.clientY - touchStartY;
+            el.addEventListener('touchmove', (e) => {
+                if (!arcadeOpen) return;
+                const touch = e.touches[0];
+                const dx = touch.clientX - touchStartX;
+                const dy = touch.clientY - touchStartY;
+                if (Math.abs(dx) < touchThreshold && Math.abs(dy) < touchThreshold) return;
+                if (Math.abs(dx) > Math.abs(dy)) setDirection(dx > 0 ? 'right' : 'left');
+                else setDirection(dy > 0 ? 'down' : 'up');
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+            }, { passive: true });
+        }
 
-            if (Math.abs(dx) < touchThreshold && Math.abs(dy) < touchThreshold) {
-                return;
-            }
-
-            if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > 0 && velocity.x === 0) {
-                    velocity = { x: gridSize, y: 0 };
-                } else if (dx < 0 && velocity.x === 0) {
-                    velocity = { x: -gridSize, y: 0 };
-                }
-            } else {
-                if (dy > 0 && velocity.y === 0) {
-                    velocity = { x: 0, y: gridSize };
-                } else if (dy < 0 && velocity.y === 0) {
-                    velocity = { x: 0, y: -gridSize };
-                }
-            }
-
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-        }, { passive: true });
-
+        bindSwipe(gameArena);
+        bindSwipe(mobileGameArena);
 
         function setDirection(dir) {
-            if (!gameRunning) return;
-            if (dir === 'up' && velocity.y === 0) velocity = { x: 0, y: -gridSize };
-            if (dir === 'down' && velocity.y === 0) velocity = { x: 0, y: gridSize };
-            if (dir === 'left' && velocity.x === 0) velocity = { x: -gridSize, y: 0 };
-            if (dir === 'right' && velocity.x === 0) velocity = { x: gridSize, y: 0 };
+            if (!arcadeOpen) return;
+            games[currentGame].input(dir);
         }
 
         function bindControl(btn, dir) {
@@ -2342,10 +2888,22 @@
         bindControl(btnLeft, 'left');
         bindControl(btnRight, 'right');
 
-        mobileGameClose.addEventListener('click', () => {
-            endGame();
+        arenaClose.addEventListener('click', () => {
+            closeArcade();
             gameOverMessage.classList.remove('active');
         });
+
+        closeGameFromOver.addEventListener('click', () => {
+            closeArcade();
+            gameOverMessage.classList.remove('active');
+        });
+
+        mobileGameClose.addEventListener('click', () => {
+            closeArcade();
+            gameOverMessage.classList.remove('active');
+        });
+
+        renderCardHighs();
 
         function scrollToSection(sectionId) {
             const section = document.getElementById(sectionId);
@@ -2424,18 +2982,20 @@
                 proj_pqc_desc: 'Turned a dense topic into an interactive app with live demos, animations, and checkpoints that kept a non-technical audience engaged and informed.',
                 proj_isms_title: 'ISMS for Various Mock Companies',
                 proj_isms_desc: 'Designed ISMS frameworks and audit packs that helped mock organizations map risks, close gaps, and prove readiness for compliance reviews.',
-                proj_snake_title: 'Bored? Play Snake :)',
-                proj_snake_desc: 'A playful mini-game built into the site for quick breaks, fast reflexes, and a little nostalgia.',
+                proj_snake_title: 'Bored? Play a Game :)',
+                proj_snake_desc: 'Three retro mini-games — Snake, Tetris, and Pac — built into the site for quick breaks, fast reflexes, and a little nostalgia.',
                 role_full_dev: 'Role: Full Development',
                 role_auditor: 'Role: Auditor',
                 role_fun: 'Role: Fun Side Quest',
                 view_project: 'View Project →',
-                play_snake: 'Play Snake',
+                play_snake: 'Play Arcade',
                 stop_game: 'Stop Game',
-                arena_tag: '// Snake Arena',
+                arena_tag: '// Arcade',
                 arena_title: 'Playfield',
-                arena_subtitle: 'Starts when you hit “Play Snake” in Projects',
-                arena_help: 'Controls: Arrow Keys / WASD to move, Space for turbo, any other key to exit turbo. On mobile: swipe to move.',
+                arena_subtitle: 'Pick a game — keyboard on desktop, swipe or arrows on mobile',
+                arena_help_snake: 'Snake — Arrow Keys / WASD to move, Space for turbo. Eat robots, dodge the alien.',
+                arena_help_tetris: 'Tetris — ←/→ move, ↑ rotate, ↓ soft drop, Space hard drop.',
+                arena_help_pac: 'Pac — Arrow Keys / WASD to steer. Clear every dot; power pellets turn the tables.',
                 close_game: 'Close Game',
                 contact_tag: '// Get In Touch',
                 contact_title: "Let's Connect",
@@ -2446,7 +3006,7 @@
                 contact_linkedin: 'LinkedIn',
                 score_label: 'SCORE',
                 high_label: 'HIGH',
-                high_score: 'High Score',
+                high_score: 'High Scores',
                 game_instructions: 'Press Arrow Keys or WASD to Start!',
                 game_instructions_move: 'Move with Arrow Keys or WASD. Space = Turbo.',
                 game_over: 'GAME OVER',
@@ -2498,18 +3058,20 @@
                 proj_pqc_desc: 'Convertí un tema denso en una aplicación interactiva con demos en vivo, animaciones y checkpoints para audiencias no técnicas.',
                 proj_isms_title: 'SGSI para Varias Empresas Simuladas',
                 proj_isms_desc: 'Diseñé marcos de SGSI y paquetes de auditoría que ayudaron a mapear riesgos, cerrar brechas y demostrar preparación para cumplimiento.',
-                proj_snake_title: '¿Aburrido? Juega Snake :)',
-                proj_snake_desc: 'Un mini‑juego integrado para descansos rápidos, reflejos ágiles y un toque de nostalgia.',
+                proj_snake_title: '¿Aburrido? Juega algo :)',
+                proj_snake_desc: 'Tres mini‑juegos retro — Snake, Tetris y Pac — integrados en el sitio para descansos rápidos, reflejos ágiles y un toque de nostalgia.',
                 role_full_dev: 'Rol: Desarrollo completo',
                 role_auditor: 'Rol: Auditor',
                 role_fun: 'Rol: Proyecto divertido',
                 view_project: 'Ver Proyecto →',
-                play_snake: 'Jugar Snake',
+                play_snake: 'Jugar Arcade',
                 stop_game: 'Detener juego',
-                arena_tag: '// Arena Snake',
+                arena_tag: '// Arcade',
                 arena_title: 'Campo de juego',
-                arena_subtitle: 'Inicia cuando presionas “Jugar Snake” en Proyectos',
-                arena_help: 'Controles: Flechas / WASD para mover, Espacio para turbo, cualquier otra tecla para salir del turbo. En móvil: desliza para mover.',
+                arena_subtitle: 'Elige un juego — teclado en escritorio, desliza o flechas en móvil',
+                arena_help_snake: 'Snake — Flechas / WASD para mover, Espacio para turbo. Come robots, esquiva al alien.',
+                arena_help_tetris: 'Tetris — ←/→ mover, ↑ rotar, ↓ caída suave, Espacio caída dura.',
+                arena_help_pac: 'Pac — Flechas / WASD para dirigir. Come todos los puntos; las píldoras de poder cambian las tornas.',
                 close_game: 'Cerrar juego',
                 contact_tag: '// Hablemos',
                 contact_title: 'Conectemos',
@@ -2520,7 +3082,7 @@
                 contact_linkedin: 'LinkedIn',
                 score_label: 'PUNTOS',
                 high_label: 'RÉCORD',
-                high_score: 'Récord',
+                high_score: 'Récords',
                 game_instructions: '¡Presiona Flechas o WASD para comenzar!',
                 game_instructions_move: 'Mueve con Flechas o WASD. Espacio = Turbo.',
                 game_over: 'FIN DEL JUEGO',
@@ -2554,7 +3116,7 @@
         }
 
         function updateGameButtonLabel() {
-            if (gameRunning) {
+            if (arcadeOpen) {
                 gameButton.textContent = translations[currentLang].stop_game;
             } else {
                 gameButton.textContent = translations[currentLang].play_snake;
