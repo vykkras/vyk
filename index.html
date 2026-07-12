@@ -770,6 +770,84 @@
             font-weight: 500;
         }
 
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 1;
+            background: var(--accent-primary);
+            color: #ffffff;
+            padding: 4rem 3rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-tagline {
+            max-width: 380px;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 999px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            background: #ffffff;
+            color: var(--accent-primary);
+            border-color: #ffffff;
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            footer {
+                padding: 3rem 1.5rem 1.5rem;
+            }
+
+            .footer-container {
+                flex-direction: column;
+            }
+        }
+
         /* Scroll indicator */
         /* Responsive */
         @media (max-width: 768px) {
@@ -1527,6 +1605,25 @@
         </div>
     </section>
 
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo">&lt;/VYK&gt;</div>
+                <p class="footer-tagline" data-i18n="footer_tagline">Building secure, human-friendly software from Miami to Madrid.</p>
+            </div>
+            <div class="footer-links">
+                <a href="mailto:vmkrasovsky@yahoo.com" data-i18n="contact_email">Email</a>
+                <a href="https://github.com/vykkras" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://www.linkedin.com/in/victor-llivina-051166245" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span data-i18n="footer_rights">© 2026 Victor Llivina. All rights reserved.</span>
+            <span data-i18n="footer_made">Designed &amp; built by hand</span>
+        </div>
+    </footer>
+
     <!-- Mobile Game Overlay -->
     <div class="mobile-game-overlay" id="mobileGameOverlay" aria-hidden="true">
         <div class="mobile-game-header">
@@ -2232,7 +2329,10 @@
                 play_again: 'Play Again',
                 modal_why: 'Why I Built It',
                 modal_functions: 'Core Functions',
-                request_demo: 'Request Demo'
+                request_demo: 'Request Demo',
+                footer_tagline: 'Building secure, human-friendly software from Miami to Madrid.',
+                footer_rights: '© 2026 Victor Llivina. All rights reserved.',
+                footer_made: 'Designed & built by hand'
             },
             es: {
                 nav_home: 'Inicio',
@@ -2304,7 +2404,10 @@
                 play_again: 'Jugar de nuevo',
                 modal_why: 'Por qué lo construí',
                 modal_functions: 'Funciones clave',
-                request_demo: 'Solicitar demo'
+                request_demo: 'Solicitar demo',
+                footer_tagline: 'Construyendo software seguro y cercano, de Miami a Madrid.',
+                footer_rights: '© 2026 Victor Llivina. Todos los derechos reservados.',
+                footer_made: 'Diseñado y construido a mano'
             }
         };
 
