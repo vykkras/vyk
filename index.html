@@ -122,6 +122,12 @@
 
         .pac-quip.show { opacity: 1; }
 
+        .pac-quip a {
+            color: inherit;
+            text-decoration: underline;
+            pointer-events: auto;
+        }
+
         /* Background animations stop/play (next to the logo) */
         .nav-brand {
             display: flex;
@@ -3476,6 +3482,7 @@
             }
 
             // Pac's speech bubble (DOM, so it stays readable above page content)
+            const RICKROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
             const QUIPS = {
                 en: [
                     "We can't keep meeting like this.",
@@ -3483,7 +3490,8 @@
                     "Personal space, buddy.",
                     "I'm just here for the dots.",
                     "Tell Blinky I said hi.",
-                    "You okay back there?"
+                    "You okay back there?",
+                    { text: "I dedicated this song to you \u{1F3B5}", href: RICKROLL }
                 ],
                 es: [
                     "No podemos seguir viéndonos así.",
@@ -3491,7 +3499,8 @@
                     "Espacio personal, amigo.",
                     "Solo vengo por los puntos.",
                     "Saluda a Blinky de mi parte.",
-                    "¿Todo bien ahí atrás?"
+                    "¿Todo bien ahí atrás?",
+                    { text: "Te dediqué esta canción \u{1F3B5}", href: RICKROLL }
                 ]
             };
             const quipEl = document.createElement('div');
@@ -3501,10 +3510,23 @@
             function showQuip(x, y) {
                 const lang = (typeof currentLang !== 'undefined' && QUIPS[currentLang]) ? currentLang : 'en';
                 const list = QUIPS[lang];
-                quipEl.textContent = list[Math.floor(Math.random() * list.length)];
+                const quip = list[Math.floor(Math.random() * list.length)];
+                if (typeof quip === 'string') {
+                    quipEl.textContent = quip;
+                } else {
+                    quipEl.textContent = '';
+                    const a = document.createElement('a');
+                    a.href = quip.href;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.textContent = quip.text;
+                    quipEl.appendChild(a);
+                }
                 quipEl.style.left = Math.round(x) + 'px';
                 quipEl.style.top = Math.round(y) + 'px';
                 quipEl.classList.add('show');
+                // link quips linger so there's time to click them
+                return typeof quip === 'string' ? 70 : 220;
             }
             function hideQuip() {
                 quipEl.classList.remove('show');
@@ -3776,8 +3798,7 @@
                     dots = dots.filter(x => (dir > 0 ? x > pac : x < pac));
                     if (!quipped && pac > 5 && pac < cols - 6 && Math.abs(pac - ghost) > 4 && Math.random() < 0.006) {
                         quipped = true;
-                        quipTicks = 70;
-                        showQuip(pac * CELL + CELL / 2, row * CELL - 6);
+                        quipTicks = showQuip(pac * CELL + CELL / 2, row * CELL - 6);
                     }
                     const ghostOut = dir > 0 ? ghost > cols + 2 : ghost < -3;
                     if (ghostOut) pause = 50;
@@ -3828,8 +3849,7 @@
                     const px = pac * CELL + CELL / 2;
                     const cy = row * CELL + CELL / 2;
                     if (Math.hypot(x - px, y - cy) < 70) {
-                        quipTicks = 70;
-                        showQuip(px, row * CELL - 6);
+                        quipTicks = showQuip(px, row * CELL - 6);
                     }
                 }
                 return { stepMs: 40, step, draw, click, cleanup: hideQuip };
