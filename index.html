@@ -3523,9 +3523,22 @@
             quipEl.className = 'pac-quip';
             document.body.appendChild(quipEl);
 
-            function showQuip(x, y) {
+            // pac goes full gladiator when the fruit turns the tables — Latin needs no i18n
+            const LATIN_HUNT = [
+                'Carpe spectrum!',
+                'Veni, vidi, momordi!',
+                'Audentes fortuna iuvat!',
+                'Memento mori, phantasma!',
+                'Alea iacta est!'
+            ];
+            const LATIN_VICTORY = [
+                'Consummatum est.',
+                'Sic transit gloria spectri.'
+            ];
+
+            function showQuip(x, y, pool) {
                 const lang = (typeof currentLang !== 'undefined' && QUIPS[currentLang]) ? currentLang : 'en';
-                const list = QUIPS[lang];
+                const list = pool || QUIPS[lang];
                 const quip = list[Math.floor(Math.random() * list.length)];
                 if (typeof quip === 'string') {
                     quipEl.textContent = quip;
@@ -3543,6 +3556,10 @@
                 quipEl.classList.add('show');
                 // link quips linger so there's time to click them
                 return typeof quip === 'string' ? 70 : 220;
+            }
+            function moveQuip(x, y) {
+                quipEl.style.left = Math.round(x) + 'px';
+                quipEl.style.top = Math.round(y) + 'px';
             }
             function hideQuip() {
                 quipEl.classList.remove('show');
@@ -3783,6 +3800,7 @@
             // — pac: chomps a dot row while a navy ghost tails him; sometimes has words —
             function pacScene() {
                 let row, dir, pac, ghost, dots, pause, quipTicks, quipped;
+                let fruit, fruited, hunt, gloat, latin;
 
                 function newRun() {
                     row = 1 + Math.floor(Math.random() * Math.max(1, rows - 2));
@@ -3794,13 +3812,50 @@
                     pause = 0;
                     quipTicks = 0;
                     quipped = false;
+                    fruit = null;
+                    fruited = false;
+                    hunt = false;
+                    gloat = 0;
+                    latin = 0;
                 }
                 newRun();
 
                 function step() {
                     if (pause > 0) {
                         pause--;
-                        if (pause === 0) newRun();
+                        if (pause === 0) {
+                            hideQuip();
+                            newRun();
+                        }
+                        return;
+                    }
+                    if (gloat > 0) {
+                        // savoring the victory over where the ghost used to be
+                        gloat--;
+                        if (gloat === 0) {
+                            hideQuip();
+                            pause = 40;
+                        }
+                        return;
+                    }
+                    if (hunt) {
+                        pac -= dir * 0.16;
+                        ghost -= dir * 0.105;
+                        if (latin > 0) {
+                            latin--;
+                            moveQuip(pac * CELL + CELL / 2, row * CELL - 6);
+                            if (latin === 0) hideQuip();
+                        }
+                        if (Math.abs(pac - ghost) < 0.9) {
+                            hunt = false;
+                            gloat = 70;
+                            showQuip(pac * CELL + CELL / 2, row * CELL - 6, LATIN_VICTORY);
+                        } else if (dir > 0 ? ghost < -3 : ghost > cols + 2) {
+                            // the ghost lives to haunt another run
+                            hunt = false;
+                            hideQuip();
+                            pause = 50;
+                        }
                         return;
                     }
                     if (quipTicks > 0) {
@@ -3812,6 +3867,19 @@
                     pac += dir * 0.09;
                     ghost += dir * 0.082;
                     dots = dots.filter(x => (dir > 0 ? x > pac : x < pac));
+                    // rare fruit drop ahead of pac, arcade style — once per run
+                    if (fruit === null && !fruited && Math.random() < 0.004) {
+                        const fx = Math.round(pac + dir * (10 + Math.random() * 8));
+                        if (fx > 2 && fx < cols - 3) fruit = fx;
+                    }
+                    if (fruit !== null && (dir > 0 ? pac >= fruit : pac <= fruit)) {
+                        // fruit power: turn around and hunt the hunter
+                        fruit = null;
+                        fruited = true;
+                        hunt = true;
+                        latin = showQuip(pac * CELL + CELL / 2, row * CELL - 6, LATIN_HUNT);
+                        return;
+                    }
                     if (!quipped && pac > 5 && pac < cols - 6 && Math.abs(pac - ghost) > 4 && Math.random() < 0.006) {
                         quipped = true;
                         quipTicks = showQuip(pac * CELL + CELL / 2, row * CELL - 6);
@@ -3829,10 +3897,24 @@
                         ctx.arc(x * CELL + CELL / 2, cy, 4, 0, Math.PI * 2);
                         ctx.fill();
                     });
+                    if (fruit !== null) {
+                        const fx = fruit * CELL + CELL / 2;
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(fx - 3, cy - 3);
+                        ctx.quadraticCurveTo(fx + 2, cy - 15, fx + 8, cy - 13);
+                        ctx.stroke();
+                        ctx.fillStyle = 'rgba(230, 57, 70, 0.85)';
+                        ctx.beginPath();
+                        ctx.arc(fx - 4, cy + 4, 6, 0, Math.PI * 2);
+                        ctx.arc(fx + 5, cy + 2, 6, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                     const px = pac * CELL + CELL / 2;
                     const mouth = 0.18 + 0.17 * Math.abs(Math.sin(performance.now() / 130));
-                    // while quipping, pac turns to face the ghost
-                    const facing = quipTicks > 0 ? -dir : dir;
+                    // while quipping, hunting, or gloating, pac faces the ghost
+                    const facing = (quipTicks > 0 || hunt || gloat > 0) ? -dir : dir;
                     const base = facing > 0 ? 0 : Math.PI;
                     ctx.fillStyle = `rgba(${BLUE}, 0.55)`;
                     ctx.beginPath();
@@ -3840,8 +3922,12 @@
                     ctx.arc(px, cy, 17, base + mouth * Math.PI, base - mouth * Math.PI);
                     ctx.closePath();
                     ctx.fill();
+                    if (gloat > 0) return; // the ghost has been... consummatum
                     const gx = ghost * CELL + CELL / 2;
-                    ctx.fillStyle = `rgba(${NAVY}, 0.4)`;
+                    // hunted ghosts flicker with fright
+                    ctx.fillStyle = hunt && Math.floor(performance.now() / 160) % 2
+                        ? 'rgba(255, 255, 255, 0.45)'
+                        : `rgba(${NAVY}, 0.4)`;
                     ctx.beginPath();
                     ctx.arc(gx, cy - 2, 15, Math.PI, 0);
                     ctx.lineTo(gx + 15, cy + 10);
@@ -3861,11 +3947,16 @@
 
                 function click(x, y) {
                     // poke pac and he stops to say something
-                    if (pause > 0) return;
+                    if (pause > 0 || gloat > 0) return;
                     const px = pac * CELL + CELL / 2;
                     const cy = row * CELL + CELL / 2;
                     if (Math.hypot(x - px, y - cy) < 70) {
-                        quipTicks = showQuip(px, row * CELL - 6);
+                        if (hunt) {
+                            // mid-hunt pokes only fuel the war cry
+                            latin = showQuip(px, row * CELL - 6, LATIN_HUNT);
+                        } else {
+                            quipTicks = showQuip(px, row * CELL - 6);
+                        }
                     }
                 }
                 return { stepMs: 40, step, draw, click, cleanup: hideQuip };
