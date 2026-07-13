@@ -437,6 +437,24 @@
             box-shadow: none;
         }
 
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .cta-button.ghost {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+        }
+
+        .cta-button.ghost:hover {
+            border-color: rgba(255, 255, 255, 0.95);
+        }
+
         /* Section Headers */
         .section-header {
             text-align: center;
@@ -1606,9 +1624,14 @@
                     <span class="hero-badge" data-i18n="badge_pqc">Post-Quantum Cryptography</span>
                     <span class="hero-badge" data-i18n="badge_gamedev">Game Development</span>
                 </div>
-                <button class="cta-button" onclick="scrollToSection('projects')">
-                    <span data-i18n="cta_view_work">View My Work</span>
-                </button>
+                <div class="hero-actions">
+                    <button class="cta-button" onclick="scrollToSection('projects')">
+                        <span data-i18n="cta_view_work">View My Work</span>
+                    </button>
+                    <a class="cta-button ghost" href="assets/Victor_Llivina_CV.pdf" download="Victor_Llivina_CV.pdf">
+                        <span data-i18n="cta_download_cv">Download CV</span>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -3114,6 +3137,7 @@
                 badge_pqc: 'Post-Quantum Cryptography',
                 badge_gamedev: 'Game Development',
                 cta_view_work: 'View My Work',
+                cta_download_cv: 'Download CV',
                 bg_label: 'Animations',
                 skills_tag: '// Expertise',
                 skills_title: 'Technical Skills',
@@ -3190,6 +3214,7 @@
                 badge_pqc: 'Criptografía Post-Cuántica',
                 badge_gamedev: 'Desarrollo de Videojuegos',
                 cta_view_work: 'Ver Mi Trabajo',
+                cta_download_cv: 'Descargar CV',
                 bg_label: 'Animaciones',
                 skills_tag: '// Experiencia',
                 skills_title: 'Habilidades Técnicas',
